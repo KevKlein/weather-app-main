@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex,noarchive, nofollow" />
+    <title>Kevin Klein - Contact</title>
+    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
+    <!--Favicon.io links-->
+    <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <script src='main.js'></script>
+</head>
+<body>
+    <header>
+        <h1><img src="android-chrome-192x192.png" alt="K icon"/>Kevin Klein</h1>    
+    </header>
+    <nav class="pages-nav" class="centered-content">
+        <a href="./index.html">Home</a>
+        <a href="./gallery.html">Gallery</a>
+        <a href="./contact.html">Contact</a>
+        <a href="./order.html">Order</a>
+    </nav>
+    <main>
+        <section>
+            <h2>Contact</h2>
+            <article>
+                <form action="/review" method="POST">
+
+                    <p class="no-margin-bottom-font-large">It's election season in America! Would you like to participate in a poll?</p>
+                    <p class="no-margin-top">Your answers will (probably) not be shared with too many people.</p>
+                    
+                    <fieldset>
+                        <legend>About your vote</legend>
+            
+                        <p class="radio-group">Who do you prefer for president of the US?
+                            <label for="Harris">
+                                <input type="radio" name="president" id="kamala" value="Kamala Harris" autofocus="">
+                                Kamala Harris
+                            </label>
+                            <label for="Trump">
+                                <input type="radio" name="president" id="trump" value="Donald Trump">
+                                Donald Trump
+                            </label>
+                            <label for="thirdParty">
+                                <input type="radio" name="president" id="neither" value="neither Trump nor Harris">
+                                neither
+                            </label>
+                            <label for="thirdParty">
+                                <input type="radio" name="president" id="self" value="you yourself">
+                                I could do a better job myself
+                            </label>
+                        </p>
+
+                                            <!-- Notice how the options are nested inside the select tag and use the value attribute
+                            The most obvious choice is already selected. 
+                            Do not use the topic of this example in the Assignment.
+                        -->
+                        <p>
+                            <label for="votedVia">How did you vote?</label>
+                                <select name="votedVia" id="votedVia">
+                                    <option value="inPerson">In person</option>
+                                    <option value="mail">By mail</option>
+                                    <option value="fax">By fax</option>
+                                    <option value="none">Didn't vote</option>
+                                </select>
+                        </p>
+                        <!--
+                        <p>How do you feel about your preferred candidate?
+                            <label for="feelingPreferred" class="range-slider">
+                                Bottom of the barrel <input type="range" name="feelingPreferred" id="feelingPreferred" min="-3" max="3">Love them!
+                            </label>
+                        </p>
+
+                        <p>How do you feel about the opposition candidate?
+                            <label for="feelingOpposition" class="range-slider">
+                                Believe it or not, jail.<input type="range" name="feelingOpposition" id="feelingOpposition" min="-3" max="3">They're great too!
+                            </label>
+                        </p>
+                        -->
+                        <p class="display-contents-inline">Did you vote in the previous election?
+                            <label for="yes">
+                                <input type="radio" name="votedPrev" id="yes" value="voted">
+                                Yes
+                            </label>
+                            <label for="no">
+                                <input type="radio" name="votedPrev" id="no" value="didn't vote">
+                                No
+                            </label>
+                        </p>
+                    </fieldset>
+                    
+                    <fieldset class="political-priorities">
+                        <legend>About your political priorities</legend>
+                        <p class="larger-font">How much do you care about the following issues?</p>
+                        <p class="indented">The economy
+                            <label for="economy" class="range-slider">
+                                not much <input type="range" name="economy" id="economy" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Women's rights & reproductive policies
+                            <label for="womensRights" class="range-slider">
+                                not much <input type="range" name="womensRights" id="womensRights" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Immigration
+                            <label for="immigration" class="range-slider">
+                                not much <input type="range" name="immigration" id="immigration" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Affordable healthcare
+                            <label for="healthcare" class="range-slider">
+                                not much <input type="range" name="healthcare" id="healthcare" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Affordable education
+                            <label for="education" class="range-slider">
+                                not much <input type="range" name="education" id="education" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Climate & the environment
+                            <label for="climate" class="range-slider">
+                                not much <input type="range" name="climate" id="climate" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Foreign affairs
+                            <label for="foreignAffairs" class="range-slider">
+                                not much <input type="range" name="foreignAffairs" id="foreignAffairs" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                        <p class="indented">Gun rights & safety policies
+                            <label for="guns" class="range-slider">
+                                not much <input type="range" name="guns" id="guns" min="-3" max="3">a lot
+                            </label>
+                        </p>
+                    </fieldset>
+
+
+                    <fieldset>
+                        <!-- The legend element is used to describe this fieldset, and perhaps prompt the user.
+                            Use one legend per fieldset. 
+                        -->
+                        <legend>About you</legend>
+            
+                        
+                        <!-- It is best practice to require the user's name in a form, so you can refer to them when replying. 
+                            Input of type text will take a string.
+                            Every Input gets a Label. 
+                            Match the label's for attribute with the input's ID.
+                            Set the number of characters with maxlength, and the visible width with size.
+                            Show the correct data input format with a placeholder example.
+                            If this is the first field in the form, then provide autofocus so the cursor is ready for typing.
+                            Inputs are self-closing with />.
+                        -->
+                        <p>
+                            <label for="usernameInput" aria-required="true" class="required">Name
+                                <input type="text" name="usernameInput" id="usernameInput" size="30" maxlength="100" required="" pattern="[a-zA-Z0-9 ]+" placeholder="John Doe">
+                            </label>
+                        </p>
+                        <!-- A typical email field includes many attributes.
+                            Require the email, so you can respond to the user. 
+                            Match the label's for attribute with the input's ID.
+                            Set the number of characters with maxlength and the visible width with size.
+                            Use the pattern attribute with a regular expression to check for the correct format. 
+                            Show the correct data input format with a placeholder example.
+                        -->
+                        <p>
+                            <label for="email" class="required">Email
+                                <input type="email" name="eAddress" id="email" size="30" maxlength="100" required="" pattern="[^ @]+@[^ @]+\.[a-z]+" placeholder="name@server.com">
+                            </label>
+                        </p>
+                        <p>
+                            <label for="zipCode">Zip Code
+                                <input type="text" name="zipCode" id="zipCode" size="7" maxlength="5" placeholder="e.g. 97339" pattern="[0-9]{5}">
+                            </label>
+                        </p>
+
+                        <!--
+                        <p>
+                            <label for="americanZip" class=>Don't have an American zip code
+                                <input type="checkbox" name="americanZip" id="americanZip" size="30" maxlength="100" value="no">
+                            </label>
+                        </p>
+                        -->
+
+                        
+                        <!-- To elicit a paragraph response, use textarea. 
+                            Set limits for textboxes to help avoid script injections, then
+                            tell the users how much text is allowed, in a paragraph, label, or placeholder. 
+                            Textarea fields are not self-closing. 
+                            A better textarea will be styled with height and width via the stylesheet file.
+                            Do not use the values of this example in the Assignment.
+                        -->
+                        <p class="thoughtBox">
+                            <label for="comment"  class="required">Other thoughts, about the election or otherwise?</label>
+                            <textarea name="comment" id="comment" minlenth="1" maxlenth="200" required=""  class="required"placeholder="Write 200 characters or less."></textarea>
+                        </p>
+                
+                        <p class="polling-checkboxes">
+                            <label>
+                                <input type="checkbox" name="showMe" id="showResults" value="results">
+                                Show me the poll results
+                            </label>
+                            <label>
+                                <input type="checkbox" name="showMe" id="pollingVolunteer" value="volunteer">
+                                Show me how to volunteer at a polling place
+                            </label>
+                        </p>
+
+                        
+                        <!-- When users must choose a single option (usually binary), 
+                            provide radio buttons grouped by name.  
+                            Notice how the label text is after the input, rather than before.
+                            The value values can be a string, 
+                            but the name, id, and for values must be single words in camelCase.
+                            Do not use the topic of this example in the Assignment.
+                        -->
+
+
+                        <!-- Use the button element to send the data.
+                            It is not self-closing.
+                        -->
+                        <button type="submit">Submit</button>
+                
+                    </fieldset>
+                </form>
+            </article>
+        </section>
+    </main>
+</body>
+<footer>
+    <p>&copy; 2024 Kevin Klein</p>
+</footer>
+</html>
