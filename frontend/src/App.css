@@ -18,6 +18,7 @@
     --cloud-semi-transparent: #F4F9FDee;
     --grey-cloud: #bccad7;
     --sky: #72C4F3;
+    --sky-bluer: #49AFEF;
     --sky-transparent: #72C4F366;
     --forest: #183A41;
     --forest-semi-transparent: #183A4199;
@@ -271,6 +272,18 @@
   ins {}
   
 
+  .coords-wrapper {
+
+  }
+  
+  .undoButton {
+    background-color: var(--cloud);
+    color: var(--cerulean);
+  }
+
+  .undoButton:hover {
+  }
+
   /*  ----- Weather Chart ------ */
   .weather-container {
     display: flex;
@@ -413,7 +426,7 @@
   }
 
   button:hover {
-    background-color: var(--cerulean);
+    background-color: var(--sky-transparent);
     border: solid 2px var(--forest);
   }
 

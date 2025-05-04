@@ -11,7 +11,7 @@ import {
   } from 'recharts';
 import React, { useState } from 'react';
   
-const chartColors = {
+const colors = {
     orange: "#ff7300",           
     blue : "#0074D9",
     blue_transparent : "#0074D9aa",
@@ -25,80 +25,33 @@ const chartColors = {
 };
 
 
-const sampleData = [
-    { time: "00:00", temperature: 52, precipitation: 0, cloudCover: 40 },
-    { time: "01:00", temperature: 51, precipitation: 0, cloudCover: 45 },
-    { time: "02:00", temperature: 50, precipitation: 0, cloudCover: 60 },
-    { time: "03:00", temperature: 49, precipitation: 5, cloudCover: 80 },
-    { time: "04:00", temperature: 48, precipitation: 10, cloudCover: 100 },
-    { time: "05:00", temperature: 47, precipitation: 15, cloudCover: 100 },
-    { time: "06:00", temperature: 47, precipitation: 20, cloudCover: 100 },
-    { time: "07:00", temperature: 48, precipitation: 15, cloudCover: 100 },
-    { time: "08:00", temperature: 50, precipitation: 10, cloudCover: 100 },
-    { time: "09:00", temperature: 53, precipitation: 5,  cloudCover: 80 },
-    { time: "10:00", temperature: 56, precipitation: 0,  cloudCover: 65 },
-    { time: "11:00", temperature: 58, precipitation: 0,  cloudCover: 50 },
-    { time: "12:00", temperature: 60, precipitation: 0,  cloudCover: 45 },
-    { time: "13:00", temperature: 61, precipitation: 0,  cloudCover: 50 },
-    { time: "14:00", temperature: 62, precipitation: 0,  cloudCover: 55 },
-    { time: "15:00", temperature: 63, precipitation: 0,  cloudCover: 65 },
-    { time: "16:00", temperature: 62, precipitation: 5,  cloudCover: 75 },
-    { time: "17:00", temperature: 60, precipitation: 10, cloudCover: 95 },
-    { time: "18:00", temperature: 58, precipitation: 15, cloudCover: 100 },
-    { time: "19:00", temperature: 56, precipitation: 20, cloudCover: 100 },
-    { time: "20:00", temperature: 54, precipitation: 25, cloudCover: 100 },
-    { time: "21:00", temperature: 53, precipitation: 30, cloudCover: 100 },
-    { time: "22:00", temperature: 52, precipitation: 35, cloudCover: 100 },
-    { time: "23:00", temperature: 51, precipitation: 40, cloudCover: 100 },
-    { time: "00:00+", temperature: 50, precipitation: 35, cloudCover: 100 }
-];
-
-const sampleData7 = Array.from({ length: 28 }, (_, i) => {
-    const date = new Date();
-    date.setHours(0, 0, 0, 0);
-    date.setTime(date.getTime() + i * 6 * 60 * 60 * 1000); // advance 6 hours per point (6hr * 60min/hr * 60sec/min * 1000ms/s)
-  
-    return {
-      time: date.toLocaleDateString(),
-      temperature: Math.round(50 + Math.random() * 20 * Math.sin((i / 4) * 2 * Math.PI)), // sine wave
-      precipitation: +(Math.random() * 1).toFixed(2), // inches
-      cloudCover: Math.floor(Math.random() * 100), // percent
-      humidity: Math.floor(50 + 30 * Math.sin((i / 4) * 2 * Math.PI + Math.PI / 2)),
-      windSpeed: +(5 + Math.random() * 10).toFixed(1), // mph
-      apparentTemperature: Math.round(48 + 12 * Math.sin((i / 4) * 2 * Math.PI + 0.3)),
-    };
-});
-
-
-export default function WeatherChart() {
+export default function WeatherChart({ data }) {
+    console.log({data});
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
 
     const allMetrics = [
-        { key: 'cloudCover', label: 'Cloud Cover (%)', 
-            color: chartColors.grey, yAxisId: 'y_percent', yAxisLabel: '%' },
-        { key: 'temperature', label: 'Temperature (°F)', 
-            color: chartColors.orange, yAxisId: 'y_temperature', yAxisLabel: '°F'},
-        { key: 'apparentTemp', label: 'Apparent Temp (°F)', 
-            color: chartColors.red, yAxisId: 'y_temperature', yAxisLabel: '°F', },
-        { key: 'precipitation', label: 'Precipitation (mm)', 
-            color: chartColors.blue, yAxisId: 'y_precipitation', yAxisLabel: 'inches' },
-        { key: 'precipitationChance', label: 'Chance Precipitation (%)', 
-            color: chartColors.blue, yAxisId: 'y_percent', yAxisLabel: '%' },
-        { key: 'humidity', label: 'Humidity (%)', 
-            color: chartColors.sky_blue, yAxisId: 'y_percent', yAxisLabel: '%' },
-        { key: 'windSpeed', label: 'Wind Speed (km/h)', 
-            color: chartColors.lime_green, yAxisId: 'y_speed', yAxisLabel: 'mph' }
+        { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%' },
+        { key: 'temperature', label: 'Temperature (°F)', color: colors.orange, yAxisId: 'yTemp', yAxisLabel: '°F'},
+        { key: 'apparentTemp', label: 'Apparent Temp (°F)', color: colors.red, yAxisId: 'yApparentTemp', yAxisLabel: '°F', },
+        { key: 'precipitation', label: 'Precipitation (mm)', color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: 'inches' },
+        { key: 'precipitationChance', label: 'Chance Precipitation (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%' },
+        { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%' },
+        { key: 'windSpeed', label: 'Wind Speed (km/h)', color: colors.lime_green, yAxisId: 'ySpeed', yAxisLabel: 'mph' }
     ];
     
     const [selectedMetrics, setSelectedMetrics] = useState(
          new Set(['cloudCover', 'temperature', 'precipitation', ])
     );
 
+    if (!data || data.length ===0) {
+        return (
+        <p className='weatherChartFailMessage'>No weather data available.</p>
+    )}
     return (
     <div className="weather-container">
         {/* Weather Chart */}
         <ResponsiveContainer>
-            <ComposedChart id="WeatherChart" className="weather-chart" data={sampleData7}>
+            <ComposedChart id="WeatherChart" className="weather-chart" data={data}>
                 <CartesianGrid stroke="#CCCCCC" />
                 <XAxis
                 dataKey="time"
@@ -129,15 +82,15 @@ export default function WeatherChart() {
                 {/* Tooltips (for chart mouseover) */}
                 <Tooltip />
 
-                {/* data visualization (lines) on weather chart*/}
+                {/* data visualization (lines & bars) on weather chart*/}
                 {Array.from(selectedMetrics).map(key => {
                     const metric = allMetrics.find(m => m.key === key);
                     return metric.key === "precipitation" ? (
                         <Bar key={metric.key}
                             yAxisId={metric.yAxisId}
                             dataKey={metric.key} 
-                            fill={chartColors.blue_transparent} 
-                            activeBar={<Rectangle fill={chartColors.sky_blue_transparent} stroke={chartColors.blue_transparent} />}
+                            fill={colors.blue_transparent} 
+                            activeBar={<Rectangle fill={colors.sky_blue_transparent} stroke={colors.blue_transparent} />}
                         />
                     ) : (
                         <Line key={metric.key} 
@@ -195,12 +148,12 @@ export default function WeatherChart() {
                 )}
             </div>
 
-            {/* additional metric checkboxes button */}
+            {/* "Additional Metrics" button */}
             <button
                 onClick={() => setShowMetricCheckboxes(!showMetricCheckboxes)}
                 className="show-additional-metrics-button"
             >
-                {showMetricCheckboxes ? 'Hide Metrics' : 'Additional Metrics'}
+                {showMetricCheckboxes ? 'Done' : 'Additional Metrics'}
             </button>
         </div>
     </div>
