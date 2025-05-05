@@ -118,10 +118,85 @@
     padding-bottom: 1%;
   }
 
-  .location-input{
-    margin: 2px;
-    padding: 0 2%;
+  .location-outer {
+    padding-left: 2%;
   }
+
+  .get-location-header {
+    color: var(--forest-semi-transparent);
+    margin-top: 10px;
+    font-size: large;
+    margin-left: 0;
+    padding-bottom: 0.5%;
+  }
+
+  .get-location-header {
+    color: var(--forest-semi-transparent);
+    margin-top: 10px;
+    font-size: large;
+    margin-left: 0;
+    padding-bottom: 0.5%;
+  }
+
+  .location-input{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;      
+    align-items: center;  
+    justify-content:flex-start;
+  }
+
+  .location-input button {
+    margin: 0;
+  }
+
+  .coords-wrapper {
+    display: flex;
+    flex-direction: column;
+    margin: 0;           
+  }
+
+  .input-wrapper input {
+    /* padding: 1.2rem 0.5rem 0.5rem; */
+    font-size: 1rem;
+  }
+
+  .input-wrapper label {
+    position: absolute;
+    top: 0.5rem;
+    left: 1.5rem;
+    /* color: ; */
+    font-size: 1rem;
+  }
+
+  .enterCoordinatesWrapper {
+
+  }
+
+  .geolocationWrapper, .prevWrapper{
+    padding-left: 2%;
+  }
+
+  .geolocationButton {
+    width: 50px;
+    height: 50px;
+  }
+
+  .usegeolocationButton svg{
+  }
+  
+  .prevButton {
+    background-color: var(--cloud);
+    color: var(--cerulean);
+  }
+
+  .prevButton:hover {
+  }
+
+  .helpSection {
+    max-width: 800px;
+  }
+
   aside {
     width: 40%;
     padding: 1% 0 2% 2%;
@@ -202,7 +277,7 @@
   li {}
   dt {}
   dd {
-    margin-top: 2px;
+    margin-top: 10px;
     margin-bottom: 5px;
   }
   
@@ -237,11 +312,7 @@
     font-style: normal;
   }
 
-  .getlocation {
-    color: var(--forest-semi-transparent);
-    margin-top: 10px;
-    font-size: large;
-  }
+
 
   h5 {}
   h6 {}
@@ -272,17 +343,7 @@
   ins {}
   
 
-  .coords-wrapper {
 
-  }
-  
-  .undoButton {
-    background-color: var(--cloud);
-    color: var(--cerulean);
-  }
-
-  .undoButton:hover {
-  }
 
   /*  ----- Weather Chart ------ */
   .weather-container {
@@ -336,6 +397,12 @@
   .show-additional-metrics-button:hover {
     background-color: var(--sky);
     border: 1px solid var(--forest);
+  }
+
+  .weatherChartFailMessage {
+    padding: 2%;
+    font-size: large;
+    color: var(--forest-semi-transparent);
   }
 
   /*  ----- Table ----- */
@@ -403,7 +470,7 @@
 
   input, button, textarea, select { 
    font-size:110%; 
-   padding: 1% 1%;
+   padding: 1% 0%;
    font-family:inherit; 
    color: inherit
   }

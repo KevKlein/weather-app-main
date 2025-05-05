@@ -30,27 +30,29 @@ export default function WeatherChart({ data }) {
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
 
     const allMetrics = [
-        { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%' },
-        { key: 'temperature', label: 'Temperature (°F)', color: colors.orange, yAxisId: 'yTemp', yAxisLabel: '°F'},
-        { key: 'apparentTemp', label: 'Apparent Temp (°F)', color: colors.red, yAxisId: 'yApparentTemp', yAxisLabel: '°F', },
-        { key: 'precipitation', label: 'Precipitation (mm)', color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: 'inches' },
-        { key: 'precipitationChance', label: 'Chance Precipitation (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%' },
-        { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%' },
-        { key: 'windSpeed', label: 'Wind Speed (km/h)', color: colors.lime_green, yAxisId: 'ySpeed', yAxisLabel: 'mph' }
+        { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right'},
+        { key: 'temperature', label: 'Temperature (°F)', color: colors.orange, yAxisId: 'yTemp', yAxisLabel: '°F', position: 'insideLeft', orientation: 'left'},
+        { key: 'apparentTemp', label: 'Apparent Temp (°F)', color: colors.red, yAxisId: 'yTemp', yAxisLabel: '°F', position: 'insideLeft', orientation: 'left' },
+        { key: 'precipitation', label: 'Precipitation (mm)', color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: 'inches', position: 'insideLeft', orientation: 'left' },
+        { key: 'precipitationChance', label: 'Chance Precipitation (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
+        { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
+        { key: 'windSpeed', label: 'Wind Speed (km/h)', color: colors.lime_green, yAxisId: 'ySpeed', yAxisLabel: 'mph', position: 'insideLeft', orientation: 'left' }
     ];
     
     const [selectedMetrics, setSelectedMetrics] = useState(
          new Set(['cloudCover', 'temperature', 'precipitation', ])
     );
 
+
     if (!data || data.length ===0) {
         return (
-        <p className='weatherChartFailMessage'>No weather data available.</p>
+        <h4 className='weatherChartFailMessage'>Choose a valid location to get a forecast.</h4>
     )}
+
     return (
     <div className="weather-container">
         {/* Weather Chart */}
-        <ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={300}>
             <ComposedChart id="WeatherChart" className="weather-chart" data={data}>
                 <CartesianGrid stroke="#CCCCCC" />
                 <XAxis
@@ -68,21 +70,22 @@ export default function WeatherChart({ data }) {
                     return (
                         <YAxis
                             yAxisId={metric.yAxisId}
+                            axisLine={false}
                             label={{
                                 value: metric.yAxisLabel,
                                 angle: -90,
-                                position: "insideLeft",
-                                dx: 10, 
+                                dx: -15, 
                                 style: { textAnchor: "middle", stroke: metric.color, fontWeight: "lighter"} }}
-                            // stroke={metric.color}
-                            domain={metric.key === "precipitation" ? [0, 3] : ['auto', 'auto']}
+                            domain={metric.key === "precipitation" ? [0, (dataMax => { return Math.max(0.8, dataMax); })] : ['auto', 'auto']}
                         />
                     )
                 })}
+
+                
                 {/* Tooltips (for chart mouseover) */}
                 <Tooltip />
 
-                {/* data visualization (lines & bars) on weather chart*/}
+                {/* Lines & bars on weather chart */}
                 {Array.from(selectedMetrics).map(key => {
                     const metric = allMetrics.find(m => m.key === key);
                     return metric.key === "precipitation" ? (
@@ -97,7 +100,9 @@ export default function WeatherChart({ data }) {
                             yAxisId={metric.yAxisId}
                             type="monotone" 
                             dataKey={metric.key} 
-                            stroke={metric.color} 
+                            stroke={metric.color}
+                            strokeWidth={1.5}
+                            dot={false}
                         />
                     );
                 })}

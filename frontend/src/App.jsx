@@ -19,13 +19,11 @@ function App() {
         </header>
 
         <main>
-          <section>
-            <Routes>
-              <Route path="/"       element={<HomePage   />} />
-              <Route path="/weather" element={<WeatherPage />} />
-              <Route path="/help" element={<HelpPage />} />
-            </Routes>
-          </section>
+          <Routes>
+            <Route path="/"       element={<HomePage   />} />
+            <Route path="/weather" element={<WeatherPage />} />
+            <Route path="/help" element={<HelpPage />} />
+          </Routes>
         </main>
 
         <footer>

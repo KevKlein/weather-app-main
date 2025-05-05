@@ -16,7 +16,7 @@ function HomePage(){
     const navigate = useNavigate();
 
     return (
-        <>
+        <><section>
             <article>                  
                 {/* <i FiSun /> <i FaDiceD20 /> <i WiDayRainWind /> */}
                 <h2> Nat20 Weather</h2>
@@ -26,7 +26,7 @@ function HomePage(){
                 </button>
                 
             </article>
-        </>
+        </section></>
     )
 }
 
