@@ -53,16 +53,29 @@ export default function WeatherChart({ data }) {
     <div className="weather-container">
         {/* Weather Chart */}
         <ResponsiveContainer width="100%" height={300}>
-            <ComposedChart id="WeatherChart" className="weather-chart" data={data}>
+            <ComposedChart id="WeatherChart" className="weather-chart" data={data}
+                margin={{top: 5, left: 10, bottom: 10, right: 10 }}
+                >
                 <CartesianGrid stroke="#CCCCCC" />
                 <XAxis
                 dataKey="time"
+                ticks={data.filter(entry => entry.time.endsWith("T00:00")).map(entry => entry.time)}
                 label={{
                     value: "Time",
                     position: "bottom",
-                    offset: 0,
-                    dy: 20,
+                    offset: -5,
                     style: { textAnchor: "middle" } }}
+                tickFormatter={time => {
+                    const date = new Date(time);
+                    const weekdays = {0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6:"Sat", 7:"Sun"}
+                    var weekday = weekdays[date.getDay()];
+                    const month = date.getMonth();
+                    const day = date.getDate();
+                    var hour = date.getHours();
+                    const ampm = hour < 12 ? 'AM' : 'PM';
+                    hour = (hour % 12 === 0) ? 12 : hour % 12;
+                    return `${weekday} ${month}/${day}`;
+                    }}
                 />
                 {/* Y-Axes */}
                 {Array.from(selectedMetrics).map(key => {
@@ -74,9 +87,14 @@ export default function WeatherChart({ data }) {
                             label={{
                                 value: metric.yAxisLabel,
                                 angle: -90,
-                                dx: -15, 
+                                dx: -18, 
                                 style: { textAnchor: "middle", stroke: metric.color, fontWeight: "lighter"} }}
                             domain={metric.key === "precipitation" ? [0, (dataMax => { return Math.max(0.8, dataMax); })] : ['auto', 'auto']}
+                            tickFormatter={value => 
+                                Number.isInteger(value) 
+                                ? value.toString()  // if no fractional part, 0 sigfigs
+                                : value.toFixed(1)  // truncate to 1 sigfig
+                            }
                         />
                     )
                 })}

@@ -1,25 +1,25 @@
 import { TiWeatherPartlySunny } from "react-icons/ti";
-import { RiGpsLine } from "react-icons/ri";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import { FaUndo } from "react-icons/fa";
 import WeatherChart from './WeatherChart';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 
 function WeatherPage(){
+    // current values for weather data and coords
     const [weatherData, setWeatherData] = useState([]);
-    const [prevWeatherData, setPrevWeatherData] = useState([]);
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
     // most recently entered coords
     const [currentLat, setCurrentLat] = useState('');
     const [currentLon, setCurrentLon] = useState('');
-    // second most recently entered coords
+    // previous weather data and coords
+    const [prevWeatherData, setPrevWeatherData] = useState([]);
     const [prevLat, setPrevLat] = useState('');
     const [prevLon, setPrevLon] = useState('');
 
 
-    // Fetch weather data via api url to open-meteo, using current lat & lon. Data is in JSON format.
+    // Fetch weather data via api url to open-meteo, using current lat & lon. 
+    // Data is in JSON format.
     async function fetchWeatherData(lat, lon) {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,cloud_cover,relative_humidity_2m,wind_speed_10m,precipitation_probability,apparent_temperature&timezone=America%2FLos_Angeles&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`;
         try {
@@ -49,25 +49,29 @@ function WeatherPage(){
         return data;
     }
 
+    // Enter Coordinates button
+    function handleEnterCoordsButton(lat, lon) {
+        enterWeatherData(lat, lon);
+        saveCoords(lat, lon);
+    }
+
     // Fetch and parse new weather data for given lat & lon, save old data
     async function enterWeatherData(lat, lon) {
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
         const data = parseWeatherData(rawData);
-        saveWeatherAndCoords(data, latitude, longitude);
+        setPrevWeatherData(weatherData);
+        setWeatherData(data);
     }
 
     // store current values for weather data, latitude, longitude (for use by prev button)
     // set current values based on given data, lat, lon
-    function saveWeatherAndCoords(data, lat, lon) {
-        setPrevWeatherData(weatherData);
-        setWeatherData(data);
+    function saveCoords(lat, lon) {
         setPrevLat(currentLat);
         setPrevLon(currentLon);
         setCurrentLat(lat);
         setCurrentLon(lon);
     }
-// here we try to get rid of current 
 
     // browser geolocation
     // https://www.w3schools.com/html/html5_geolocation.asp
@@ -78,7 +82,6 @@ function WeatherPage(){
           alert("Geolocation is not supported by this browser.");
         }
     }
-    
     // mandatory helper function for geolocation
     function geoSuccess(position) {
         const lat = position.coords.latitude;
@@ -89,7 +92,6 @@ function WeatherPage(){
         setCurrentLat(lat);
         setCurrentLon(lon);
     }  
-
     // optional helper function for geolocation
     function geoError() {
         alert("Geolocation didn't work.");
@@ -114,19 +116,23 @@ function WeatherPage(){
     }
 
     // update lat upon user typing something valid
+    // latitude must be between -90 and 90
     function handleLatitudeChange(e) {
         const value = e.target.value;
-        // optional minus, optional digits, optional dot, optional digits
-        if (/^-?\d*\.?\d*$/.test(value) || value === '' || value === '-') {
-            setLatitude(value);
+        // 0-1 minus, 0+ digits, 0-1 dot, 0+ digits
+        if (value === '' || value === '-' || 
+            (/^-?\d*\.?\d*$/.test(value) && -90 <= value && value<= 90)) {
+                setLatitude(value);
         }
     }
       
     // update lon upon user typing something valid
+    // longitude must be between -180 and 180
     function handleLongitudeChange(e) {
         const value = e.target.value;
-        // optional minus, optional digits, optional dot, optional digits
-        if (/^-?\d*\.?\d*$/.test(value) || value === '' || value === '-') {
+        // 0-1 minus, 0+ digits, 0-1 dot, 0+ digits
+        if (value === '' || value === '-' || 
+            (/^-?\d*\.?\d*$/.test(value)  && -180 <= value && value<= 180)) {
             setLongitude(value);
         }
     }
@@ -169,7 +175,7 @@ function WeatherPage(){
                             <button 
                                 className="enterCoordinatesButton"
                                 title="Use entered latitude & longitude"
-                                onClick={() => enterWeatherData(latitude, longitude)}
+                                onClick={() => handleEnterCoordsButton(latitude, longitude)}
                             >
                                 Enter Coordinates
                             </button>

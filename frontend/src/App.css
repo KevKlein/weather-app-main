@@ -349,12 +349,15 @@
   .weather-container {
     display: flex;
     width: 100%; 
-    height: 300px;
-    padding: 2px;
+    height: 310px;
+    padding: 0px;
+    /* border: red 2px solid; */
+
   }
 
   .weather-chart {
-    margin:10, 30, 20, 50;
+    height: 300px;
+    /* border: green 2px solid; */
   }
   
   .weather-legend {
@@ -454,20 +457,6 @@
     font-size: large;
   }
 
-
-  p[class="radio-group"] label{
-    font-size: medium;
-  }
-
-  p[class="contact-intro"] {
-    font-size: large;
-    margin-bottom:0;
-  }
-
-  p[class="thoughtBox"] {
-    margin: 6% 0 5%;
-  }
-
   input, button, textarea, select { 
    font-size:110%; 
    padding: 1% 0%;
@@ -480,7 +469,6 @@
   }
 
   input[type='range']{ accent-color: var(--sky); }
-
 
   button {
     margin: 1% auto 0%;
@@ -553,115 +541,6 @@
   object {}
   
   /*  ----- Classes for alignment, positioning, widths, grids, embellishments, and animation -----  */
-
-  /* -----for the navs------ */
-  /* .pages-nav {
-    max-width: var(--content-max-width);
-    margin: var(--header-height) auto 0;
-    border: 2px solid var(--forest);
-    font-size: larger;
-  } */
-
-
-
-  .local {
-    padding-bottom: 0;
-  }
-
-  .local a{
-    background-color:var(--sky);
-    color: var(--forest);
-    border-radius:5px 5px 0 0;
-    border: 2px solid var(--forest);
-    border-bottom: 0 ;
-    text-decoration:none;
-    }
-
-  .local a:hover {
-    border-radius:5px 5px 0 0;
-    background-color:var(--forest);
-    border: 2px solid var(--forest);
-    border-bottom: 0 ;
-    color:var(--sky);
-    text-decoration: underline;
-  }
-
-
-  .icon {
-    padding: 0;
-    color: var(--forest-semi-transparent);
-    cursor: pointer;
-    font-size: 140%;
-
-  }
-
-  .icon:hover {
-    color: var(--forest);
-  }
-
-  .icon svg {
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .big-icon {
-    padding: 0;
-    color: var(--forest-semi-transparent);
-    cursor: pointer;
-    font-size: 300%;
-    background-color: var(--sky-transparent);
-    border-radius: 5px;
-    border: var(--cloud) 3px solid;
-  }
-
-  .big-icon:hover {
-    color: var(--sky);
-  }
-
-  .big-icon svg {
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .clicker {
-    margin-bottom: -5px;
-  }
-
-  .clicker i{
-    font-size: 190%;
-    vertical-align: middle;
-    width: 2ch; 
-  }
-
-  .minus-icon {
-    color: var(--sky);
-    cursor: pointer;
-  }
-
-  .plus-icon {
-    color: var(--sky);
-    cursor: pointer;
-  }
-  .clicker i:hover svg{
-    stroke-width: 1.5px;
-  }
-
-  .clicker i:active svg{
-    color: var(--sky);
-    stroke-width: 1.5px;
-  }
-
-  .clicker span{
-    font-size: large;
-    display: inline-block;
-    width: 2.5ch;
-    text-align: center;
-  }
-
-  .indented{
-    margin-left: 2%;
-  }
-
 
 
   .floatright {}
