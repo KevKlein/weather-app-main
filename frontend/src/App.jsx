@@ -1,9 +1,9 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { FaDiceD20 } from 'react-icons/fa'
-import Navigation from './modules/Navigation.jsx'
-import HomePage from './modules/HomePage'
-import WeatherPage from './modules/WeatherPage.jsx'
-import HelpPage from './modules/HelpPage.jsx'
+import Navigation from './pages/Navigation.jsx'
+import HomePage from './pages/HomePage'
+import WeatherPage from './pages/WeatherPage.jsx'
+import HelpPage from './pages/HelpPage.jsx'
 import './App.css'
 
 function App() {

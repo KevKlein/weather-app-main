@@ -1,6 +1,6 @@
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
-import WeatherChart from './WeatherChart';
+import WeatherChart from '../components/WeatherChart';
 import { useState } from "react";
 
 
@@ -17,14 +17,20 @@ function WeatherPage(){
     const [prevLat, setPrevLat] = useState('');
     const [prevLon, setPrevLon] = useState('');
 
+    const metrics = 
+        `temperature_2m,apparent_temperature,`
+        + `precipitation,precipitation_probability,`
+        + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
+
+
 
     // Fetch weather data via api url to open-meteo, using current lat & lon. 
     // Data is in JSON format.
     async function fetchWeatherData(lat, lon) {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation,cloud_cover,relative_humidity_2m,wind_speed_10m,precipitation_probability,apparent_temperature&timezone=America%2FLos_Angeles&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=America%2FLos_Angeles&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`;
         try {
             const response = await fetch(url);
-            if (!response.ok) throw new Error("Couldn't fetch weather data from online source");
+            if (!response.ok) throw new Error(`Couldn't fetch weather data from online source ${url}`);
             const data = await response.json();
             return data;
         } catch (error) {
@@ -82,7 +88,7 @@ function WeatherPage(){
           alert("Geolocation is not supported by this browser.");
         }
     }
-    // mandatory helper function for geolocation
+    // success function for geolocation
     function geoSuccess(position) {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
@@ -92,7 +98,7 @@ function WeatherPage(){
         setCurrentLat(lat);
         setCurrentLon(lon);
     }  
-    // optional helper function for geolocation
+    // error function for geolocation
     function geoError() {
         alert("Geolocation didn't work.");
     }
@@ -115,25 +121,18 @@ function WeatherPage(){
         setPrevLon(tempLon);
     }
 
-    // update lat upon user typing something valid
-    // latitude must be between -90 and 90
-    function handleLatitudeChange(e) {
+    /* Update latitude if user types part of valid number */
+    function handleCoordChange(e, axis='latitude') {
         const value = e.target.value;
-        // 0-1 minus, 0+ digits, 0-1 dot, 0+ digits
-        if (value === '' || value === '-' || 
-            (/^-?\d*\.?\d*$/.test(value) && -90 <= value && value<= 90)) {
+        const [min, max] = (axis === 'latitude') ? [-90, 90] : [-180, 180];
+        const regex = /^-?\d*\.?\d*$/;
+        if (value === '' || value === '-' || value === '.' ||
+            (regex.test(value) && min <= value && value <= max)) {
+            if (axis === 'latitude') {
                 setLatitude(value);
-        }
-    }
-      
-    // update lon upon user typing something valid
-    // longitude must be between -180 and 180
-    function handleLongitudeChange(e) {
-        const value = e.target.value;
-        // 0-1 minus, 0+ digits, 0-1 dot, 0+ digits
-        if (value === '' || value === '-' || 
-            (/^-?\d*\.?\d*$/.test(value)  && -180 <= value && value<= 180)) {
-            setLongitude(value);
+            } else {
+                setLongitude(value);
+            }
         }
     }
 
@@ -155,7 +154,7 @@ function WeatherPage(){
                                 size={12}
                                 title="Latitude in decimal notation"
                                 value={latitude}
-                                onChange={e => {handleLatitudeChange(e)}}
+                                onChange={e => {handleCoordChange(e, 'latitude')}}
                             />
                             <label htmlFor="latitude">Latitude</label>
                         </div>
@@ -167,7 +166,7 @@ function WeatherPage(){
                                 size={12}
                                 title="Longitude in decimal notation"
                                 value={longitude}
-                                onChange={e => {handleLongitudeChange(e)}}
+                                onChange={e => {handleCoordChange(e, 'longitude')}}
                             />
                             <label htmlFor="longitude">Longitude</label>
                         </div>

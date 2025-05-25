@@ -11,6 +11,7 @@ import {
   } from 'recharts';
 import React, { useState } from 'react';
   
+
 const colors = {
     orange: "#ff7300",           
     blue : "#0074D9",
@@ -28,7 +29,9 @@ const colors = {
 export default function WeatherChart({ data }) {
     console.log({data});
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
-
+    const [selectedMetrics, setSelectedMetrics] = useState(
+         new Set(['cloudCover', 'temperature', 'precipitation', ])
+    );
     const allMetrics = [
         { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right'},
         { key: 'temperature', label: 'Temperature (°F)', color: colors.orange, yAxisId: 'yTemp', yAxisLabel: '°F', position: 'insideLeft', orientation: 'left'},
@@ -39,11 +42,6 @@ export default function WeatherChart({ data }) {
         { key: 'windSpeed', label: 'Wind Speed (km/h)', color: colors.lime_green, yAxisId: 'ySpeed', yAxisLabel: 'mph', position: 'insideLeft', orientation: 'left' }
     ];
     
-    const [selectedMetrics, setSelectedMetrics] = useState(
-         new Set(['cloudCover', 'temperature', 'precipitation', ])
-    );
-
-
     if (!data || data.length ===0) {
         return (
         <h4 className='weatherChartFailMessage'>Choose a valid location to get a forecast.</h4>
@@ -74,6 +72,7 @@ export default function WeatherChart({ data }) {
                     var hour = date.getHours();
                     const ampm = hour < 12 ? 'AM' : 'PM';
                     hour = (hour % 12 === 0) ? 12 : hour % 12;
+                    console.log(`date: ${weekday} ${month}/${day}`);
                     return `${weekday} ${month}/${day}`;
                     }}
                 />
