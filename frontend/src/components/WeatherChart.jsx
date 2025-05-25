@@ -27,7 +27,7 @@ const colors = {
 
 
 export default function WeatherChart({ data }) {
-    console.log({data});
+    // console.log({data});
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
     const [selectedMetrics, setSelectedMetrics] = useState(
          new Set(['cloudCover', 'temperature', 'precipitation', ])
@@ -67,12 +67,11 @@ export default function WeatherChart({ data }) {
                     const date = new Date(time);
                     const weekdays = {0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6:"Sat", 7:"Sun"}
                     var weekday = weekdays[date.getDay()];
-                    const month = date.getMonth();
+                    const month = date.getMonth() + 1; // + 1 because getMonth is zero indexed
                     const day = date.getDate();
                     var hour = date.getHours();
                     const ampm = hour < 12 ? 'AM' : 'PM';
                     hour = (hour % 12 === 0) ? 12 : hour % 12;
-                    console.log(`date: ${weekday} ${month}/${day}`);
                     return `${weekday} ${month}/${day}`;
                     }}
                 />
