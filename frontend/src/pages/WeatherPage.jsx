@@ -5,18 +5,13 @@ import { useState } from "react";
 
 
 function WeatherPage(){
-    // current values for weather data and coords
-    const [weatherData, setWeatherData] = useState([]);
-    const [latitude, setLatitude] = useState('');
-    const [longitude, setLongitude] = useState('');
-    // most recently entered coords
-    const [currentLat, setCurrentLat] = useState('');
-    const [currentLon, setCurrentLon] = useState('');
-    // previous weather data and coords
-    const [prevWeatherData, setPrevWeatherData] = useState([]);
-    const [prevLat, setPrevLat] = useState('');
-    const [prevLon, setPrevLon] = useState('');
 
+    const [data, setData] = useState({
+        inputVals: {lat: '', lon: ''},
+        current: {lat: '', lon: '', weather: []},
+        prev: {lat: '', lon: '', weather: []},
+    })
+    const { inputVals, current, prev } = data;
     const metrics = 
         `temperature_2m,apparent_temperature,`
         + `precipitation,precipitation_probability,`
@@ -56,7 +51,7 @@ function WeatherPage(){
     }
 
     // Enter Coordinates button
-    function handleEnterCoordsButton(lat, lon) {
+    function handleEnterCoordsButton({lat, lon}) {
         enterWeatherData(lat, lon);
         saveCoords(lat, lon);
     }
@@ -65,18 +60,24 @@ function WeatherPage(){
     async function enterWeatherData(lat, lon) {
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
-        const data = parseWeatherData(rawData);
-        setPrevWeatherData(weatherData);
-        setWeatherData(data);
+        const weatherData = parseWeatherData(rawData);
+        // setPrevWeatherData(weatherData);
+        // setWeatherData(data);
+        setData(d => ({
+            ...d,
+            prev: {    ...d.prev,    weather: current.weather },
+            current: { ...d.current, weather: weatherData }
+        }))
     }
 
     // store current values for weather data, latitude, longitude (for use by prev button)
     // set current values based on given data, lat, lon
     function saveCoords(lat, lon) {
-        setPrevLat(currentLat);
-        setPrevLon(currentLon);
-        setCurrentLat(lat);
-        setCurrentLon(lon);
+        setData(d => ({
+            ...d,
+            prev: { ...d.prev, lat: current.lat, lon: current.lon},
+            current: {...d.current, lat, lon}
+        }))
     }
 
     // browser geolocation
@@ -93,10 +94,11 @@ function WeatherPage(){
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         enterWeatherData(lat, lon); // react set functions are async so we can't wait for them first
-        setLatitude(lat);
-        setLongitude(lon);
-        setCurrentLat(lat);
-        setCurrentLon(lon);
+        setData(d => ({
+            ...d,
+            inputVals: {lat, lon},
+            current: {...d.current, lat, lon}
+        }))
     }  
     // error function for geolocation
     function geoError() {
@@ -105,20 +107,11 @@ function WeatherPage(){
 
     // switch current and previous values for weather data, lat, lon
     function handlePrevButton() {
-        // swap weatherData
-        const tempData = weatherData;
-        setWeatherData(prevWeatherData);
-        setPrevWeatherData(tempData);
-        // swap lat
-        const tempLat = currentLat;
-        setLatitude(prevLat);
-        setCurrentLat(prevLat);
-        setPrevLat(tempLat);
-        // swap lon
-        const tempLon = currentLon;
-        setLongitude(prevLon);
-        setCurrentLon(prevLon);
-        setPrevLon(tempLon);
+        setData(d => ({
+            inputVals: {lat: prev.lat, lon: prev.lon},
+            current: {...d.prev},
+            prev: {...d.current}
+        }))
     }
 
     /* Update latitude if user types part of valid number */
@@ -129,10 +122,16 @@ function WeatherPage(){
         if (value === '' || value === '-' || value === '.' ||
             (regex.test(value) && min <= value && value <= max)) {
             if (axis === 'latitude') {
-                setLatitude(value);
-            } else {
-                setLongitude(value);
-            }
+                setData(d => ({
+                    ...d,
+                    inputVals: {...d.inputVals, lat: value}
+                }));
+             } else {
+                setData(d => ({
+                    ...d,
+                    inputVals: {...d.inputVals, lon: value}
+                }));
+            };
         }
     }
 
@@ -153,7 +152,7 @@ function WeatherPage(){
                                 placeholder="e.g.  44.5646" 
                                 size={12}
                                 title="Latitude in decimal notation"
-                                value={latitude}
+                                value={inputVals.lat}
                                 onChange={e => {handleCoordChange(e, 'latitude')}}
                             />
                             <label htmlFor="latitude">Latitude</label>
@@ -165,7 +164,7 @@ function WeatherPage(){
                                 placeholder="e.g.  -123.262" 
                                 size={12}
                                 title="Longitude in decimal notation"
-                                value={longitude}
+                                value={inputVals.lon}
                                 onChange={e => {handleCoordChange(e, 'longitude')}}
                             />
                             <label htmlFor="longitude">Longitude</label>
@@ -174,7 +173,7 @@ function WeatherPage(){
                             <button 
                                 className="enterCoordinatesButton"
                                 title="Use entered latitude & longitude"
-                                onClick={() => handleEnterCoordsButton(latitude, longitude)}
+                                onClick={() => handleEnterCoordsButton(inputVals)}
                             >
                                 Enter Coordinates
                             </button>
@@ -203,7 +202,7 @@ function WeatherPage(){
             </article>
             <article>
                 <h3>Forecast</h3>
-                <WeatherChart data={weatherData}/> 
+                <WeatherChart data={current.weather}/> 
             </article>
 
         </section>
