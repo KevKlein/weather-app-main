@@ -18,7 +18,6 @@ function WeatherPage(){
         + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
 
 
-
     // Fetch weather data via api url to open-meteo, using current lat & lon. 
     // Data is in JSON format.
     async function fetchWeatherData(lat, lon) {
@@ -50,6 +49,76 @@ function WeatherPage(){
         return data;
     }
 
+const testData = {
+    currentUnits: {
+        cloud_cover: '%',
+        temperature: '°F',
+        apparent_temperature: '°F',
+        precipitation: 'inch',
+        precipitation_probability: '%',
+        relative_humidity_2m: '%',
+        wind_speed_10m: 'MPH',
+    },
+    desiredUnits: {
+        cloud_cover: '%',
+        temperature: '°C',
+        apparent_temperature: '°C',
+        precipitation: 'mm',
+        precipitation_probability: '%',
+        relative_humidity_2m: '%',
+        wind_speed_10m: 'KM/H',
+    },
+    testData: [
+        {
+        "time": "2025-05-04T00:00",
+        "cloudCover": 36,
+        "temperature": 50,
+        "apparentTemp": 50,
+        "precipitation": 1,
+        "precipitationChance": 10,
+        "humidity": 87,
+        "windSpeed": 1
+        },
+        {
+        "time": "2025-05-04T02:00",
+        "cloudCover": 58,
+        "temperature": 100.0,
+        "apparentTemp": 110.0,
+        "precipitation": 1.0,
+        "precipitationChance": 100,
+        "humidity": 100,
+        "windSpeed": 10.0
+        }
+    ]
+};
+
+
+
+
+    /* Convert units of weather data via POST to Microservice */
+async function convertUnits(currentUnits, desiredUnits, weatherData) {
+    const url = "http://localhost:4000/api/convert-units";
+    try {
+        const resp = await fetch(url, {
+            method:  "POST",
+            headers: { "Content-Type": "application/json" },
+            body:    JSON.stringify({ currentUnits, desiredUnits, rawData: weatherData })
+        });
+
+        if (!resp.ok) {
+            throw new Error(`Convert‐units API returned HTTP ${resp.status}`);
+        }
+
+        const body = await resp.json(); // body === { message, conversions: { desiredUnits, convertedData } }
+        return body.conversions;
+    }
+    catch (err) {
+        console.error("Error converting units:", err);
+        return null;
+    }
+}
+
+
     // Enter Coordinates button
     function handleEnterCoordsButton({lat, lon}) {
         enterWeatherData(lat, lon);
@@ -61,12 +130,13 @@ function WeatherPage(){
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
         const weatherData = parseWeatherData(rawData);
-        // setPrevWeatherData(weatherData);
-        // setWeatherData(data);
+        console.log('weatherdata: ', weatherData);
+        const converted = await convertUnits( testData.currentUnits,  testData.desiredUnits, weatherData);
+        console.log('converted: ', converted.convertedData);
         setData(d => ({
             ...d,
             prev: {    ...d.prev,    weather: current.weather },
-            current: { ...d.current, weather: weatherData }
+            current: { ...d.current, weather: converted?.convertedData ?? []}
         }))
     }
 
