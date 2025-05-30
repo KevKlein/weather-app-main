@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
+import WeatherPreferences from './WeatherPreferences';
 
-function Navigation() {
+function Navigation({data, setData}) {
     return (
        <>
            <nav className='pages-nav'> 
@@ -8,6 +9,7 @@ function Navigation() {
                 <Link to="/weather">Weather</Link>
                 <Link to="/help">Help</Link>
             </nav>
+            <WeatherPreferences data={data} setData={setData} />
        </>
     );
 }

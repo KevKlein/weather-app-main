@@ -1,27 +1,62 @@
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 import WeatherChart from '../components/WeatherChart';
-import { useState } from "react";
 
 
-function WeatherPage(){
+function WeatherPage({data, setData}){
+    const { units, inputVals, current, prev } = data;
 
-    const [data, setData] = useState({
-        inputVals: {lat: '', lon: ''},
-        current: {lat: '', lon: '', weather: []},
-        prev: {lat: '', lon: '', weather: []},
-    })
-    const { inputVals, current, prev } = data;
-    const metrics = 
-        `temperature_2m,apparent_temperature,`
-        + `precipitation,precipitation_probability,`
-        + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
-
+    const testData = {
+        currentUnits: {
+            cloud_cover: '%',
+            temperature: '°C',
+            apparent_temperature: '°C',
+            precipitation: 'mm',
+            precipitation_probability: '%',
+            relative_humidity_2m: '%',
+            wind_speed_10m: 'km/h',
+        },
+        desiredUnits: {
+            cloud_cover: '%',
+            temperature: '°F',
+            apparent_temperature: '°F',
+            precipitation: 'inch',
+            precipitation_probability: '%',
+            relative_humidity_2m: '%',
+            wind_speed_10m: 'mph',
+        },
+        weatherData: [
+            {
+            "time": "2025-05-04T00:00",
+            "cloudCover": 50,
+            "temperature": 0,
+            "apparentTemp": 1.0,
+            "precipitation": 0.1,
+            "precipitationChance": 5,
+            "humidity": 50,
+            "windSpeed": 5.0
+            },
+            {
+            "time": "2025-05-04T02:00",
+            "cloudCover": 100,
+            "temperature": 100.0,
+            "apparentTemp": 110.0,
+            "precipitation": 1.0,
+            "precipitationChance": 100,
+            "humidity": 100,
+            "windSpeed": 10.0
+            }
+        ]
+    };
 
     // Fetch weather data via api url to open-meteo, using current lat & lon. 
     // Data is in JSON format.
     async function fetchWeatherData(lat, lon) {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=America%2FLos_Angeles&wind_speed_unit=mph&temperature_unit=fahrenheit&precipitation_unit=inch`;
+        const metrics = 
+            `temperature_2m,apparent_temperature,`
+            + `precipitation,precipitation_probability,`
+            + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto`;
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Couldn't fetch weather data from online source ${url}`);
@@ -49,74 +84,46 @@ function WeatherPage(){
         return data;
     }
 
-const testData = {
-    currentUnits: {
-        cloud_cover: '%',
-        temperature: '°F',
-        apparent_temperature: '°F',
-        precipitation: 'inch',
-        precipitation_probability: '%',
-        relative_humidity_2m: '%',
-        wind_speed_10m: 'MPH',
-    },
-    desiredUnits: {
-        cloud_cover: '%',
-        temperature: '°C',
-        apparent_temperature: '°C',
-        precipitation: 'mm',
-        precipitation_probability: '%',
-        relative_humidity_2m: '%',
-        wind_speed_10m: 'KM/H',
-    },
-    testData: [
-        {
-        "time": "2025-05-04T00:00",
-        "cloudCover": 36,
-        "temperature": 50,
-        "apparentTemp": 50,
-        "precipitation": 1,
-        "precipitationChance": 10,
-        "humidity": 87,
-        "windSpeed": 1
-        },
-        {
-        "time": "2025-05-04T02:00",
-        "cloudCover": 58,
-        "temperature": 100.0,
-        "apparentTemp": 110.0,
-        "precipitation": 1.0,
-        "precipitationChance": 100,
-        "humidity": 100,
-        "windSpeed": 10.0
-        }
-    ]
-};
-
-
-
-
     /* Convert units of weather data via POST to Microservice */
-async function convertUnits(currentUnits, desiredUnits, weatherData) {
-    const url = "http://localhost:4000/api/convert-units";
-    try {
-        const resp = await fetch(url, {
-            method:  "POST",
-            headers: { "Content-Type": "application/json" },
-            body:    JSON.stringify({ currentUnits, desiredUnits, rawData: weatherData })
-        });
-
-        if (!resp.ok) {
-            throw new Error(`Convert‐units API returned HTTP ${resp.status}`);
+    async function convertUnits(units, weatherData) {
+        const url = "http://localhost:4000/api/convert-units";
+        const defaultUnits = { // default for open-meteo
+            cloud_cover: '%',
+            temperature: '°C',
+            apparent_temperature: '°C',
+            precipitation: 'mm',
+            precipitation_probability: '%',
+            relative_humidity_2m: '%',
+            wind_speed_10m: 'km/h',
+        };
+        const desiredUnits = {
+            cloud_cover: '%',
+            temperature: units.temperature,
+            apparent_temperature: '°C',
+            precipitation: units.precipitation,
+            precipitation_probability: '%',
+            relative_humidity_2m: '%',
+            wind_speed_10m: units.windSpeed,
         }
+        try {
+            const resp = await fetch(url, {
+                method:  "POST",
+                headers: { "Content-Type": "application/json" },
+                body:    JSON.stringify({ currentUnits: defaultUnits, desiredUnits: desiredUnits, rawData: weatherData })
+            });
 
-        const body = await resp.json(); // body === { message, conversions: { desiredUnits, convertedData } }
-        return body.conversions;
+            if (!resp.ok) {
+                throw new Error(`Convert‐units API returned HTTP ${resp.status}`);
+            }
+
+            const body = await resp.json(); // body === { message, conversions: { desiredUnits, convertedData } }
+            return body.conversions;
+        }
+        catch (err) {
+            console.error("Error converting units:", err);
+            return null;
+        }
     }
-    catch (err) {
-        console.error("Error converting units:", err);
-        return null;
-    }
-}
 
 
     // Enter Coordinates button
@@ -125,18 +132,23 @@ async function convertUnits(currentUnits, desiredUnits, weatherData) {
         saveCoords(lat, lon);
     }
 
-    // Fetch and parse new weather data for given lat & lon, save old data
+    /**
+     * Fetch and parse new weather data for given lat & lon, save old data.
+     * Convert values in data based on user's desired units.
+     * Display the weather chart for fetched data.
+     */
     async function enterWeatherData(lat, lon) {
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
         const weatherData = parseWeatherData(rawData);
         console.log('weatherdata: ', weatherData);
-        const converted = await convertUnits( testData.currentUnits,  testData.desiredUnits, weatherData);
-        console.log('converted: ', converted.convertedData);
+        const converted = await convertUnits(units, weatherData);
+        console.log('converted: ', converted?.convertedData ?? weatherData);
         setData(d => ({
             ...d,
             prev: {    ...d.prev,    weather: current.weather },
-            current: { ...d.current, weather: converted?.convertedData ?? []}
+            current: { ...d.current, weather: converted?.convertedData ?? weatherData}            
+            // current: { ...d.current, weather: weatherData}
         }))
     }
 
