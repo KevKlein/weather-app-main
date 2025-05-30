@@ -86,24 +86,24 @@ function WeatherPage({data, setData}){
 
     /* Convert units of weather data via POST to Microservice */
     async function convertUnits(units, weatherData) {
-        const url = "http://localhost:4000/api/convert-units";
+        const url = "http://localhost:4000/api/convert-units"; // microservice A endpoint
         const defaultUnits = { // default for open-meteo
-            cloud_cover: '%',
             temperature: '°C',
-            apparent_temperature: '°C',
             precipitation: 'mm',
+            wind_speed_10m: 'km/h',
+            apparent_temperature: '°C',
+            cloud_cover: '%',
             precipitation_probability: '%',
             relative_humidity_2m: '%',
-            wind_speed_10m: 'km/h',
         };
         const desiredUnits = {
-            cloud_cover: '%',
             temperature: units.temperature,
-            apparent_temperature: '°C',
             precipitation: units.precipitation,
+            wind_speed_10m: units.windSpeed,
+            apparent_temperature: '°C',
+            cloud_cover: '%',
             precipitation_probability: '%',
             relative_humidity_2m: '%',
-            wind_speed_10m: units.windSpeed,
         }
         try {
             const resp = await fetch(url, {
@@ -284,7 +284,7 @@ function WeatherPage({data, setData}){
             </article>
             <article>
                 <h3>Forecast</h3>
-                <WeatherChart data={current.weather}/> 
+                <WeatherChart units={units} data={current.weather}/> 
             </article>
 
         </section>

@@ -1,14 +1,4 @@
-import {
-    Bar,
-    Line,
-    Rectangle,
-    XAxis,
-    YAxis,
-    Tooltip,
-    CartesianGrid,
-    ResponsiveContainer,
-    ComposedChart,
-  } from 'recharts';
+import { Bar, Line, Rectangle, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ComposedChart } from 'recharts';
 import React, { useState } from 'react';
   
 
@@ -21,25 +11,24 @@ const colors = {
     dark_grey: "#222222",       
     sky_blue : "#72C4F3",             
     sky_blue_transparent : "#72C4F3aa",             
-    lime_green : "#BFF52D",             
+    violet: "#8845c3",         
     red : "#FA3830",
 };
 
 
-export default function WeatherChart({ data }) {
-    // console.log({data});
+export default function WeatherChart({ units, data }) {
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
     const [selectedMetrics, setSelectedMetrics] = useState(
          new Set(['cloudCover', 'temperature', 'precipitation', ])
     );
     const allMetrics = [
         { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right'},
-        { key: 'temperature', label: 'Temperature (°F)', color: colors.orange, yAxisId: 'yTemp', yAxisLabel: '°F', position: 'insideLeft', orientation: 'left'},
-        { key: 'apparentTemp', label: 'Apparent Temp (°F)', color: colors.red, yAxisId: 'yTemp', yAxisLabel: '°F', position: 'insideLeft', orientation: 'left' },
-        { key: 'precipitation', label: 'Precipitation (mm)', color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: 'inches', position: 'insideLeft', orientation: 'left' },
+        { key: 'temperature', label: `Temperature (${units.temperature})`, color: colors.orange, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left'},
+        { key: 'apparentTemp', label: `Apparent Temp (${units.temperature})`, color: colors.red, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left' },
+        { key: 'precipitation', label: `Precipitation (${units.precipitation})`, color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: `${units.precipitation}`, position: 'insideLeft', orientation: 'left' },
         { key: 'precipitationChance', label: 'Chance Precipitation (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
-        { key: 'windSpeed', label: 'Wind Speed (km/h)', color: colors.lime_green, yAxisId: 'ySpeed', yAxisLabel: 'mph', position: 'insideLeft', orientation: 'left' }
+        { key: 'windSpeed', label: `Wind Speed (${units.windSpeed})`, color: colors.violet, yAxisId: 'ySpeed', yAxisLabel: `${units.windSpeed}`, position: 'insideLeft', orientation: 'left' }
     ];
     
     if (!data || data.length ===0) {
@@ -65,7 +54,7 @@ export default function WeatherChart({ data }) {
                     style: { textAnchor: "middle" } }}
                 tickFormatter={time => {
                     const date = new Date(time);
-                    const weekdays = {0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6:"Sat", 7:"Sun"}
+                    const weekdays = {0: "Sun", 1: "Mon", 2: "Tue", 3: "Wed", 4: "Thu", 5: "Fri", 6:"Sat"}
                     var weekday = weekdays[date.getDay()];
                     const month = date.getMonth() + 1; // + 1 because getMonth is zero indexed
                     const day = date.getDate();
@@ -87,11 +76,11 @@ export default function WeatherChart({ data }) {
                                 angle: -90,
                                 dx: -18, 
                                 style: { textAnchor: "middle", stroke: metric.color, fontWeight: "lighter"} }}
-                            domain={metric.key === "precipitation" ? [0, (dataMax => { return Math.max(0.8, dataMax); })] : ['auto', 'auto']}
+                            domain={metric.key === "precipitation" ? [0, (dataMax => { return (units.precipitation === 'mm') ? Math.max(4, dataMax) : Math.max(0.2, dataMax); })] : ['auto', 'auto']}
                             tickFormatter={value => 
                                 Number.isInteger(value) 
                                 ? value.toString()  // if no fractional part, 0 sigfigs
-                                : value.toFixed(1)  // truncate to 1 sigfig
+                                : value.toFixed(2)  // truncate to 1 sigfig
                             }
                         />
                     )

@@ -25,6 +25,7 @@
     --leaf: #4F6A58;
     --orange: #ff7300;
     --lime_green: #92bb23;             
+    --violet: #8845c3;             
 
 
 
@@ -365,7 +366,7 @@ h4 {
     background-color: var(--cerulean); 
 }
 .switch.windSpeed  .slider:before {
-    background-color: var(--lime_green); 
+    background-color: var(--violet); 
 }
 
 
@@ -377,7 +378,7 @@ h4 {
   color: var(--cerulean);
 }
 .windSpeed.active-label {
-  color: var(--lime_green);
+  color: var(--violet);
 }
 
 input:checked + .slider {
