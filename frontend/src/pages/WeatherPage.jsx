@@ -94,15 +94,7 @@ function WeatherPage({data, setData}){
             }
 
             const body = await resp.json();
-            // body === { message, conversions: { desiredUnits, convertedData } }
             const { conversions: { convertedData }} = body;
-            // setData(d => ({
-            //     ...d,
-            //     current: {
-            //         ...d.current,
-            //         weather: convertedData
-            //     }
-            // }));
             return convertedData;
         }
         catch (err) {
@@ -113,27 +105,30 @@ function WeatherPage({data, setData}){
 
 
     /**
-     * Fetch and parse new weather data for given lat & lon, save old data.
-     * Display the weather chart for fetched data.
+     * Fetch, parse, and convert new weather data for given lat & lon.
+     * Save the weather data.
      */
     async function enterWeatherData(lat, lon) {
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
         const parsedData = parseWeatherData(rawData);
-        console.log('weatherdata: ', parsedData);
-        console.log(`enterWeatherData:`, data.desiredUnits);
-
-        // const convertedData = await convertUnits(defaultUnits, desiredUnits, parsedData);
-        // console.log('convertedData ', convertedData);
-        console.log('weatherData ', parsedData);
+        // console.log('weatherdata: ', parsedData);
+        // console.log(`enterWeatherData:`, data.desiredUnits);
+        // console.log('weatherData ', parsedData);
+        // Raw weather data comes in default units.
+        const convertedData = await convertUnits(defaultUnits, desiredUnits, parsedData);
         setData(d => ({
             ...d,
-            current: { ...d.current, weather: parsedData, units: defaultUnits}            
+            current: { 
+                ...d.current,
+                weather: (convertedData) ? convertedData : parsedData,
+                units: (convertedData) ? desiredUnits : defaultUnits
+            }            
         }))
     }
 
 
-    /* Trigger convertUnits any time desiredUnits or current.weather changes */
+    /* Convert units any time desiredUnits changes */
     useEffect(() => {
         if (!current.weather) return;
         const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
@@ -149,7 +144,7 @@ function WeatherPage({data, setData}){
                 console.error(err);
             }
         })();
-    }, [desiredUnits, current.units, current.weather]);
+    }, [desiredUnits]);
 
 
     // store current values for weather data, latitude, longitude (for use by prev button)
