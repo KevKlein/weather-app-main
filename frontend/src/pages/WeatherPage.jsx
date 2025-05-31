@@ -1,10 +1,13 @@
+import React, { useEffect } from "react";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 import WeatherChart from '../components/WeatherChart';
 import WeatherPreferences from '../components/WeatherPreferences';
-import { useEffect } from "react";
+import { fetchWeatherData } from "../utils/FetchWeatherData";
+import { convertUnits } from "../utils/ConvertUnits";
+import { useGeolocation } from "../utils/UseGeolocation";
 
-function WeatherPage({data, setData}){
+function WeatherPage({data, setData}) {
     const { desiredUnits, inputVals, current } = data;
     const defaultUnits = {
         temperature:    '°C',
@@ -12,123 +15,63 @@ function WeatherPage({data, setData}){
         windSpeed:      'km/h'
     };
 
-    // Enter Coordinates button
-    function handleEnterCoordsButton({lat, lon}) {
-        enterWeatherData(lat, lon);
-        saveCoords(lat, lon);
-    }
+    const { handleGeolocationButton } = useGeolocation({ setData, fetchAndConvertWeather });
 
-    // Fetch weather data via api url to open-meteo, using current lat & lon. 
-    // Data is in JSON format.
-    async function fetchWeatherData(lat, lon) {
-        const metrics = 
-            `temperature_2m,apparent_temperature,`
-            + `precipitation,precipitation_probability,`
-            + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto&forecast_days=1&temporal_resolution=hourly_6`;
-        console.log(`url: `, url);
-        try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`Couldn't fetch weather data from online source ${url}`);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error("Error fetching weather data:", error);
-            return null;
-        }
-    }
-
-    // Parse raw weather data
-    function parseWeatherData(rawData) {
-        const times = rawData.hourly.time;
-        const data = times.map((time, i) => ({
-            time,
-            cloudCover: rawData.hourly.cloud_cover[i],
-            temperature: rawData.hourly.temperature_2m[i],
-            precipitation: rawData.hourly.precipitation[i],
-            precipitationChance: rawData.hourly.precipitation_probability[i],
-            apparentTemp: rawData.hourly.apparent_temperature[i],
-            humidity: rawData.hourly.relative_humidity_2m[i],
-            windSpeed: rawData.hourly.wind_speed_10m[i],
-        }));
-        return data;
-    }
-
-    /** Transforms units to conform to microservice expected format.
-     *  Helper for convertUnits function.
+    /**
+     * Fetch, convert and save new weather data for given lat & lon, save coordinates.
      */ 
-    function buildUnitsPayload(UIunits) {
-        const payloadUnits = {
-            temperature: UIunits.temperature,
-            apparent_temperature: UIunits.temperature,
-            precipitation: UIunits.precipitation,
-            wind_speed_10m: UIunits.windSpeed,
-            cloud_cover:             '%',
-            precipitation_probability:'%',
-            relative_humidity_2m:    '%',
-        }
-        return payloadUnits;
-    }
-
-
-    /* Convert units of weather data via POST to Microservice */
-    async function convertUnits(oldUnits, newUnits, weatherData) {
-        const url = "http://localhost:4000/api/convert-units";
-        console.log(`convertUnits: old `, oldUnits);
-        console.log(`convertUnits: new `, newUnits);
-
-        const payload = {
-            currentUnits: buildUnitsPayload(oldUnits),
-            desiredUnits: buildUnitsPayload(newUnits),
-            rawData: weatherData
-        }
-        
-        try {
-            const resp = await fetch(url, {
-                method:  "POST",
-                headers: { "Content-Type": "application/json" },
-                body:    JSON.stringify(payload)
-            });
-            if (!resp.ok) {
-                throw new Error(`Convert‐units API returned HTTP ${resp.status}`);
-            }
-
-            const body = await resp.json();
-            const { conversions: { convertedData }} = body;
-            return convertedData;
-        }
-        catch (err) {
-            console.error("Error converting units:", err);
-            return null;
-        }
-    }
-
+    function handleEnterCoordsButton({lat, lon}) {
+        fetchAndConvertWeather(lat, lon);
+        setData(d => ({
+            ...d,
+            current: {...d.current, lat, lon}
+        }));
+    };
 
     /**
      * Fetch, parse, and convert new weather data for given lat & lon.
      * Save the weather data.
      */
-    async function enterWeatherData(lat, lon) {
-        const rawData = await fetchWeatherData(lat, lon);
-        if (!rawData) return;
-        const parsedData = parseWeatherData(rawData);
+    async function fetchAndConvertWeather(lat, lon) {
+        const weatherData = await fetchWeatherData(lat, lon);
+        if (!weatherData) return;
         // console.log('weatherdata: ', parsedData);
-        // console.log(`enterWeatherData:`, data.desiredUnits);
+        // console.log(`fetchAndConvertWeather:`, data.desiredUnits);
         // console.log('weatherData ', parsedData);
         // Raw weather data comes in default units.
-        const convertedData = await convertUnits(defaultUnits, desiredUnits, parsedData);
+        const convertedData = await convertUnits(defaultUnits, desiredUnits, weatherData);
         setData(d => ({
             ...d,
             current: { 
                 ...d.current,
-                weather: (convertedData) ? convertedData : parsedData,
-                units: (convertedData) ? desiredUnits : defaultUnits
+                weather: convertedData ?? [],
+                units: convertedData ? desiredUnits : defaultUnits
             }            
-        }))
-    }
+        }));
+    };
 
+    /* Update latitude if user types part of valid number */
+    function handleCoordChange(e, field='latitude') {
+        const value = e.target.value;
+        const [min, max] = (field === 'latitude') ? [-90, 90] : [-180, 180];
+        const regex = /^-?\d*\.?\d*$/;
+        if (value === '' || value === '-' || value === '.' ||
+            (regex.test(value) && min <= value && value <= max)) {
+            if (field === 'latitude') {
+                setData(d => ({
+                    ...d,
+                    inputVals: {...d.inputVals, lat: value}
+                }));
+             } else {
+                setData(d => ({
+                    ...d,
+                    inputVals: {...d.inputVals, lon: value}
+                }));
+            };
+        }
+    };
 
-    /* Convert units any time desiredUnits changes */
+    /* Convert units any time desiredUnits changes (when the user clicks a unit slider) */
     useEffect(() => {
         if (!current.weather) return;
         const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
@@ -146,72 +89,6 @@ function WeatherPage({data, setData}){
         })();
     }, [desiredUnits]);
 
-
-    // store current values for weather data, latitude, longitude (for use by prev button)
-    // set current values based on given data, lat, lon
-    function saveCoords(lat, lon) {
-        setData(d => ({
-            ...d,
-            current: {...d.current, lat, lon}
-        }))
-    }
-
-    // browser geolocation
-    // https://www.w3schools.com/html/html5_geolocation.asp
-    function handleGeolocationButton() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
-        } else {
-          alert("Geolocation is not supported by this browser.");
-        }
-    }
-    // success function for geolocation
-    function geoSuccess(position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        enterWeatherData(lat, lon); // react set functions are async so we can't wait for them first
-        setData(d => ({
-            ...d,
-            inputVals: {lat, lon},
-            current: {...d.current, lat, lon}
-        }))
-    }  
-    // error function for geolocation
-    function geoError() {
-        alert("Geolocation didn't work.");
-    }
-
-    // switch current and previous values for weather data, lat, lon
-    // function handlePrevButton() {
-    //     setData(d => ({
-    //         inputVals: {lat: prev.lat, lon: prev.lon},
-    //         current: {...d.prev},
-    //         prev: {...d.current}
-    //     }))
-    // }
-
-    /* Update latitude if user types part of valid number */
-    function handleCoordChange(e, axis='latitude') {
-        const value = e.target.value;
-        const [min, max] = (axis === 'latitude') ? [-90, 90] : [-180, 180];
-        const regex = /^-?\d*\.?\d*$/;
-        if (value === '' || value === '-' || value === '.' ||
-            (regex.test(value) && min <= value && value <= max)) {
-            if (axis === 'latitude') {
-                setData(d => ({
-                    ...d,
-                    inputVals: {...d.inputVals, lat: value}
-                }));
-             } else {
-                setData(d => ({
-                    ...d,
-                    inputVals: {...d.inputVals, lon: value}
-                }));
-            };
-        }
-    }
-
-    // main component
     return (
         <>
         <section>
