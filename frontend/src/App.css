@@ -77,15 +77,15 @@ body.homepage main {
   /* top/bot left/right */
 
 header {
-  display: flex;           /* ← make children lay out in a row */
-  align-items: center;     /* ← vertical centering */
+  display: flex;
+  align-items: center;     /* vertical centering */
   background-color:var(--cloud);
   border: 2px solid var(--forest);
   position: fixed;
   top: 0%;
   width: 100%;
   padding: 0.5rem 1rem;
-  gap: 2rem;               /* ← space between h1 and nav */
+  gap: 2rem;
   height: var(--header-height);
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
   z-index: 5;
@@ -306,6 +306,18 @@ h4 {
   font-size: larger;
   font-style: normal;
 }
+  
+/*  ----- Header for weather chart ------ */
+.forecast-header {
+  display: flex;
+}
+
+
+.weatherSliders {
+  padding-left: 7%;
+  display: flex;
+  gap: 1.3rem;
+}
 
 /* ----- Sliders ----- */
 /* Citation: CSS and JS for slider
@@ -314,10 +326,11 @@ h4 {
     https://www.w3schools.com/howto/howto_css_switch.asp */
 
 .toggle-container {
-  display: block;
-  align-items: flex-start;
-  gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
 }
+
 
 /* The switch - the box around the slider */
 .switch {
@@ -401,10 +414,6 @@ input:checked + .slider:before {
 }
 .slider.round:before {
   border-radius: 50%;
-}  
-
-.active-label {
-
 }
 
 /*  ----- Weather Chart ------ */

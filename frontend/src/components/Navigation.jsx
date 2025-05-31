@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import WeatherPreferences from './WeatherPreferences';
 
 function Navigation({data, setData}) {
     return (
@@ -9,7 +8,6 @@ function Navigation({data, setData}) {
                 <Link to="/weather">Weather</Link>
                 <Link to="/help">Help</Link>
             </nav>
-            <WeatherPreferences data={data} setData={setData} />
        </>
     );
 }

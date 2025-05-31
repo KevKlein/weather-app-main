@@ -10,10 +10,9 @@ import './App.css'
 function App() {
 
   const [data, setData] = useState({
-      units: { temperature: '°F', precipitation: 'inch', windSpeed: 'mph' },
+      desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
       inputVals: { lat: '', lon: '' },
-      current: { lat: '', lon: '', weather: [] },
-      prev: { lat: '', lon: '', weather: [] },
+      current: { lat: '', lon: '', weather: [], units: {} },
   })
 
   return (
