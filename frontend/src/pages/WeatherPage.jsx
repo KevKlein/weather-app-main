@@ -1,53 +1,22 @@
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 import WeatherChart from '../components/WeatherChart';
-
+import WeatherPreferences from '../components/WeatherPreferences';
+import { useEffect } from "react";
 
 function WeatherPage({data, setData}){
-    const { units, inputVals, current, prev } = data;
-
-    const testData = {
-        currentUnits: {
-            cloud_cover: '%',
-            temperature: '°C',
-            apparent_temperature: '°C',
-            precipitation: 'mm',
-            precipitation_probability: '%',
-            relative_humidity_2m: '%',
-            wind_speed_10m: 'km/h',
-        },
-        desiredUnits: {
-            cloud_cover: '%',
-            temperature: '°F',
-            apparent_temperature: '°F',
-            precipitation: 'inch',
-            precipitation_probability: '%',
-            relative_humidity_2m: '%',
-            wind_speed_10m: 'mph',
-        },
-        weatherData: [
-            {
-            "time": "2025-05-04T00:00",
-            "cloudCover": 50,
-            "temperature": 0,
-            "apparentTemp": 1.0,
-            "precipitation": 0.1,
-            "precipitationChance": 5,
-            "humidity": 50,
-            "windSpeed": 5.0
-            },
-            {
-            "time": "2025-05-04T02:00",
-            "cloudCover": 100,
-            "temperature": 100.0,
-            "apparentTemp": 110.0,
-            "precipitation": 1.0,
-            "precipitationChance": 100,
-            "humidity": 100,
-            "windSpeed": 10.0
-            }
-        ]
+    const { desiredUnits, inputVals, current } = data;
+    const defaultUnits = {
+        temperature:    '°C',
+        precipitation:  'mm',
+        windSpeed:      'km/h'
     };
+
+    // Enter Coordinates button
+    function handleEnterCoordsButton({lat, lon}) {
+        enterWeatherData(lat, lon);
+        saveCoords(lat, lon);
+    }
 
     // Fetch weather data via api url to open-meteo, using current lat & lon. 
     // Data is in JSON format.
@@ -56,7 +25,8 @@ function WeatherPage({data, setData}){
             `temperature_2m,apparent_temperature,`
             + `precipitation,precipitation_probability,`
             + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto`;
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto&forecast_days=1&temporal_resolution=hourly_6`;
+        console.log(`url: `, url);
         try {
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Couldn't fetch weather data from online source ${url}`);
@@ -84,40 +54,56 @@ function WeatherPage({data, setData}){
         return data;
     }
 
-    /* Convert units of weather data via POST to Microservice */
-    async function convertUnits(units, weatherData) {
-        const url = "http://localhost:4000/api/convert-units"; // microservice A endpoint
-        const defaultUnits = { // default for open-meteo
-            temperature: '°C',
-            precipitation: 'mm',
-            wind_speed_10m: 'km/h',
-            apparent_temperature: '°C',
-            cloud_cover: '%',
-            precipitation_probability: '%',
-            relative_humidity_2m: '%',
-        };
-        const desiredUnits = {
-            temperature: units.temperature,
-            precipitation: units.precipitation,
-            wind_speed_10m: units.windSpeed,
-            apparent_temperature: '°C',
-            cloud_cover: '%',
-            precipitation_probability: '%',
-            relative_humidity_2m: '%',
+    /** Transforms units to conform to microservice expected format.
+     *  Helper for convertUnits function.
+     */ 
+    function buildUnitsPayload(UIunits) {
+        const payloadUnits = {
+            temperature: UIunits.temperature,
+            apparent_temperature: UIunits.temperature,
+            precipitation: UIunits.precipitation,
+            wind_speed_10m: UIunits.windSpeed,
+            cloud_cover:             '%',
+            precipitation_probability:'%',
+            relative_humidity_2m:    '%',
         }
+        return payloadUnits;
+    }
+
+
+    /* Convert units of weather data via POST to Microservice */
+    async function convertUnits(oldUnits, newUnits, weatherData) {
+        const url = "http://localhost:4000/api/convert-units";
+        console.log(`convertUnits: old `, oldUnits);
+        console.log(`convertUnits: new `, newUnits);
+
+        const payload = {
+            currentUnits: buildUnitsPayload(oldUnits),
+            desiredUnits: buildUnitsPayload(newUnits),
+            rawData: weatherData
+        }
+        
         try {
             const resp = await fetch(url, {
                 method:  "POST",
                 headers: { "Content-Type": "application/json" },
-                body:    JSON.stringify({ currentUnits: defaultUnits, desiredUnits: desiredUnits, rawData: weatherData })
+                body:    JSON.stringify(payload)
             });
-
             if (!resp.ok) {
                 throw new Error(`Convert‐units API returned HTTP ${resp.status}`);
             }
 
-            const body = await resp.json(); // body === { message, conversions: { desiredUnits, convertedData } }
-            return body.conversions;
+            const body = await resp.json();
+            // body === { message, conversions: { desiredUnits, convertedData } }
+            const { conversions: { convertedData }} = body;
+            // setData(d => ({
+            //     ...d,
+            //     current: {
+            //         ...d.current,
+            //         weather: convertedData
+            //     }
+            // }));
+            return convertedData;
         }
         catch (err) {
             console.error("Error converting units:", err);
@@ -126,38 +112,51 @@ function WeatherPage({data, setData}){
     }
 
 
-    // Enter Coordinates button
-    function handleEnterCoordsButton({lat, lon}) {
-        enterWeatherData(lat, lon);
-        saveCoords(lat, lon);
-    }
-
     /**
      * Fetch and parse new weather data for given lat & lon, save old data.
-     * Convert values in data based on user's desired units.
      * Display the weather chart for fetched data.
      */
     async function enterWeatherData(lat, lon) {
         const rawData = await fetchWeatherData(lat, lon);
         if (!rawData) return;
-        const weatherData = parseWeatherData(rawData);
-        console.log('weatherdata: ', weatherData);
-        const converted = await convertUnits(units, weatherData);
-        console.log('converted: ', converted?.convertedData ?? weatherData);
+        const parsedData = parseWeatherData(rawData);
+        console.log('weatherdata: ', parsedData);
+        console.log(`enterWeatherData:`, data.desiredUnits);
+
+        // const convertedData = await convertUnits(defaultUnits, desiredUnits, parsedData);
+        // console.log('convertedData ', convertedData);
+        console.log('weatherData ', parsedData);
         setData(d => ({
             ...d,
-            prev: {    ...d.prev,    weather: current.weather },
-            current: { ...d.current, weather: converted?.convertedData ?? weatherData}            
-            // current: { ...d.current, weather: weatherData}
+            current: { ...d.current, weather: parsedData, units: defaultUnits}            
         }))
     }
+
+
+    /* Trigger convertUnits any time desiredUnits or current.weather changes */
+    useEffect(() => {
+        if (!current.weather) return;
+        const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
+        if (sameUnits) return;
+          (async () => {
+            try {
+                const converted = await convertUnits(current.units, desiredUnits, current.weather);
+                setData(d => ({
+                    ...d,
+                    current: { ...d.current, units: desiredUnits, weather: converted }
+                }));
+            } catch (err) {
+                console.error(err);
+            }
+        })();
+    }, [desiredUnits, current.units, current.weather]);
+
 
     // store current values for weather data, latitude, longitude (for use by prev button)
     // set current values based on given data, lat, lon
     function saveCoords(lat, lon) {
         setData(d => ({
             ...d,
-            prev: { ...d.prev, lat: current.lat, lon: current.lon},
             current: {...d.current, lat, lon}
         }))
     }
@@ -188,13 +187,13 @@ function WeatherPage({data, setData}){
     }
 
     // switch current and previous values for weather data, lat, lon
-    function handlePrevButton() {
-        setData(d => ({
-            inputVals: {lat: prev.lat, lon: prev.lon},
-            current: {...d.prev},
-            prev: {...d.current}
-        }))
-    }
+    // function handlePrevButton() {
+    //     setData(d => ({
+    //         inputVals: {lat: prev.lat, lon: prev.lon},
+    //         current: {...d.prev},
+    //         prev: {...d.current}
+    //     }))
+    // }
 
     /* Update latitude if user types part of valid number */
     function handleCoordChange(e, axis='latitude') {
@@ -270,21 +269,15 @@ function WeatherPage({data, setData}){
                                 <FaLocationCrosshairs />
                             </button>
                         </div>
-                        <div className="prevWrapper">
-                            <button 
-                                className="prevButton" 
-                                title="Previous location"
-                                onClick={handlePrevButton}
-                            >
-                                Previous Location
-                            </button>
-                        </div>
                     </div>
                 </div>
             </article>
             <article>
-                <h3>Forecast</h3>
-                <WeatherChart units={units} data={current.weather}/> 
+                <div className="forecast-header">
+                    <h3>Forecast</h3>
+                    <WeatherPreferences data={data} setData={setData} convertUnits={convertUnits} />
+                </div>
+                <WeatherChart units={current.units} data={current.weather}/> 
             </article>
 
         </section>
