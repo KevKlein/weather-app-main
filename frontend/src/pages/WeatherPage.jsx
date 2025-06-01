@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
 import WeatherChart from '../components/WeatherChart';
@@ -6,8 +6,10 @@ import WeatherPreferences from '../components/WeatherPreferences';
 import { fetchWeatherData } from "../utils/FetchWeatherData";
 import { convertUnits } from "../utils/ConvertUnits";
 import { useGeolocation } from "../utils/UseGeolocation";
+import LocationSearch from "../components/LocationSearch";
 
 function WeatherPage({data, setData}) {
+    const [ showLocationSearch, setShowLocationSearch ] = useState(false);
     const { desiredUnits, inputVals, current } = data;
     const defaultUnits = {
         temperature:    '°C',
@@ -91,68 +93,81 @@ function WeatherPage({data, setData}) {
 
     return (
         <>
-        <section>
-            <h2><TiWeatherPartlySunny />Weather Forecast</h2>
-            <article id="location" className='location'>
-                <h3>Location</h3>
-                <div className="location-outer">
-                    <h4 className='get-location-header'>Enter your location by latitude and longitude, or use geolocation API.</h4>
-                    <div className="location-input">
-                        <div className="coords-wrapper">
-                            <input
-                                id="latitude"
-                                type="text" 
-                                placeholder="e.g.  44.5646" 
-                                size={12}
-                                title="Latitude in decimal notation"
-                                value={inputVals.lat}
-                                onChange={e => {handleCoordChange(e, 'latitude')}}
-                            />
-                            <label htmlFor="latitude">Latitude</label>
-                        </div>
-                        <div className="coords-wrapper">
-                            <input 
-                                id="longitude"
-                                type="text" 
-                                placeholder="e.g.  -123.262" 
-                                size={12}
-                                title="Longitude in decimal notation"
-                                value={inputVals.lon}
-                                onChange={e => {handleCoordChange(e, 'longitude')}}
-                            />
-                            <label htmlFor="longitude">Longitude</label>
-                        </div>
-                        <div className="enterCoordinatesWrapper">
-                            <button 
-                                className="enterCoordinatesButton"
-                                title="Use entered latitude & longitude"
-                                onClick={() => handleEnterCoordsButton(inputVals)}
-                            >
-                                Enter Coordinates
-                            </button>
-                        </div>
-                        <div className="geolocationWrapper">
-                            <button 
-                                className="geolocationButton" 
-                                title="Use my location"
-                                aria-label="Use geolocation"
-                                onClick={handleGeolocationButton}
-                            >
-                                <FaLocationCrosshairs />
-                            </button>
+            <section>
+                <h2><TiWeatherPartlySunny />Weather Forecast</h2>
+                <article id="location" className='location'>
+                    <h3>Location</h3>
+                    <div className="location-outer">
+                        <h4 className='get-location-header'>Enter your location by latitude and longitude, or use geolocation API.</h4>
+                        <div className="location-input">
+                            <div className="coords-wrapper">
+                                <input
+                                    id="latitude"
+                                    type="text" 
+                                    placeholder="e.g.  44.5646" 
+                                    size={12}
+                                    title="Latitude in decimal notation"
+                                    value={inputVals.lat}
+                                    onChange={e => {handleCoordChange(e, 'latitude')}}
+                                />
+                                <label htmlFor="latitude">Latitude</label>
+                            </div>
+                            <div className="coords-wrapper">
+                                <input 
+                                    id="longitude"
+                                    type="text" 
+                                    placeholder="e.g.  -123.262" 
+                                    size={12}
+                                    title="Longitude in decimal notation"
+                                    value={inputVals.lon}
+                                    onChange={e => {handleCoordChange(e, 'longitude')}}
+                                />
+                                <label htmlFor="longitude">Longitude</label>
+                            </div>
+                            <div className="enterCoordinatesWrapper">
+                                <button 
+                                    className="enterCoordinatesButton"
+                                    title="Use entered latitude & longitude"
+                                    onClick={() => handleEnterCoordsButton(inputVals)}
+                                >
+                                    Enter Coordinates
+                                </button>
+                            </div>
+                            <div className="locationSearchWrapper">
+                                <button 
+                                    className="locationSearch" 
+                                    title="Find a location by name or geolocation"
+                                    onClick={() => setShowLocationSearch(true)}
+                                >
+                                    Search
+                                </button>
+                            </div>
+                            <div className="geolocationWrapper">
+                                <button 
+                                    className="geolocationButton" 
+                                    title="Use my location"
+                                    aria-label="Use geolocation"
+                                    onClick={handleGeolocationButton}
+                                >
+                                    <FaLocationCrosshairs />
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </article>
-            <article>
-                <div className="forecast-header">
-                    <h3>Forecast</h3>
-                    <WeatherPreferences data={data} setData={setData} convertUnits={convertUnits} />
-                </div>
-                <WeatherChart units={current.units} data={current.weather}/> 
-            </article>
+                </article>
+                <article>
+                    <div className="forecast-header">
+                        <h3>Forecast</h3>
+                        <WeatherPreferences data={data} setData={setData} convertUnits={convertUnits} />
+                    </div>
+                    <WeatherChart units={current.units} data={current.weather}/> 
+                </article>
 
-        </section>
+            </section>
+
+            {showLocationSearch && (
+                <LocationSearch data={data} setData={setData} setShowLocationSearch={setShowLocationSearch}/>
+            )}       
         </>
     )
 }

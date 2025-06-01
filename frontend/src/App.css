@@ -27,8 +27,6 @@
     --lime_green: #92bb23;             
     --violet: #8845c3;             
 
-
-
     --header-height:60px;
     --content-max-width: 1150px; /* used by section and nav */ 
   }
@@ -527,6 +525,7 @@ button {
 button:hover {
   background-color: var(--sky-transparent);
   border: solid 2px var(--forest);
+  cursor: pointer;
 }
 
 
