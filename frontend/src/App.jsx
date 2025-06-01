@@ -11,7 +11,6 @@ function App() {
 
   const [data, setData] = useState({
       desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
-      inputVals: { lat: '', lon: '' },
       current: { lat: '', lon: '', weather: [], units: {} },
   })
 

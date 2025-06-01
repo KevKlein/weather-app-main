@@ -6,7 +6,7 @@ export async function fetchWeatherData(lat, lon) {
         `temperature_2m,apparent_temperature,`
         + `precipitation,precipitation_probability,`
         + `cloud_cover,relative_humidity_2m,wind_speed_10m`;
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto&forecast_days=1&temporal_resolution=hourly_6`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=${metrics}&timezone=auto`;
     console.log(`url: `, url);
     try {
         const response = await fetch(url);
@@ -19,6 +19,7 @@ export async function fetchWeatherData(lat, lon) {
         return null;
     }
 }
+
 /* Parse raw weather data */
 function parseWeatherData(rawData) {
     const times = rawData.hourly.time;

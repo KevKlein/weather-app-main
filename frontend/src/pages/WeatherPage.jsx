@@ -10,7 +10,8 @@ import LocationSearch from "../components/LocationSearch";
 
 function WeatherPage({data, setData}) {
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);
-    const { desiredUnits, inputVals, current } = data;
+    const [ inputCoords, setInputCoords] = useState({ lat: '', lon: '' })
+    const { desiredUnits, current } = data;
     const defaultUnits = {
         temperature:    '°C',
         precipitation:  'mm',
@@ -60,14 +61,14 @@ function WeatherPage({data, setData}) {
         if (value === '' || value === '-' || value === '.' ||
             (regex.test(value) && min <= value && value <= max)) {
             if (field === 'latitude') {
-                setData(d => ({
-                    ...d,
-                    inputVals: {...d.inputVals, lat: value}
+                setInputCoords(coords => ({
+                    ...coords,
+                    lat: value
                 }));
              } else {
-                setData(d => ({
-                    ...d,
-                    inputVals: {...d.inputVals, lon: value}
+                setInputCoords(coords => ({
+                    ...coords,
+                    lon: value
                 }));
             };
         }
@@ -98,16 +99,16 @@ function WeatherPage({data, setData}) {
                 <article id="location" className='location'>
                     <h3>Location</h3>
                     <div className="location-outer">
-                        <h4 className='get-location-header'>Enter your location by latitude and longitude, or use geolocation API.</h4>
+                        <h4 className='get-location-header'>Enter your location by coordinates, geolocation, or city.</h4>
                         <div className="location-input">
                             <div className="coords-wrapper">
                                 <input
                                     id="latitude"
                                     type="text" 
-                                    placeholder="e.g.  44.5646" 
+                                    placeholder="e.g.  44.56" 
                                     size={12}
                                     title="Latitude in decimal notation"
-                                    value={inputVals.lat}
+                                    value={inputCoords.lat}
                                     onChange={e => {handleCoordChange(e, 'latitude')}}
                                 />
                                 <label htmlFor="latitude">Latitude</label>
@@ -116,10 +117,10 @@ function WeatherPage({data, setData}) {
                                 <input 
                                     id="longitude"
                                     type="text" 
-                                    placeholder="e.g.  -123.262" 
+                                    placeholder="e.g.  -123.26" 
                                     size={12}
                                     title="Longitude in decimal notation"
-                                    value={inputVals.lon}
+                                    value={inputCoords.lon}
                                     onChange={e => {handleCoordChange(e, 'longitude')}}
                                 />
                                 <label htmlFor="longitude">Longitude</label>
@@ -128,18 +129,9 @@ function WeatherPage({data, setData}) {
                                 <button 
                                     className="enterCoordinatesButton"
                                     title="Use entered latitude & longitude"
-                                    onClick={() => handleEnterCoordsButton(inputVals)}
+                                    onClick={() => handleEnterCoordsButton(inputCoords)}
                                 >
                                     Enter Coordinates
-                                </button>
-                            </div>
-                            <div className="locationSearchWrapper">
-                                <button 
-                                    className="locationSearch" 
-                                    title="Find a location by name or geolocation"
-                                    onClick={() => setShowLocationSearch(true)}
-                                >
-                                    Search
                                 </button>
                             </div>
                             <div className="geolocationWrapper">
@@ -150,6 +142,15 @@ function WeatherPage({data, setData}) {
                                     onClick={handleGeolocationButton}
                                 >
                                     <FaLocationCrosshairs />
+                                </button>
+                            </div>
+                            <div className="locationSearchWrapper">
+                                <button 
+                                    className="locationSearchButton" 
+                                    title="Find a location by name"
+                                    onClick={() => setShowLocationSearch(true)}
+                                >
+                                    City Search
                                 </button>
                             </div>
                         </div>
@@ -166,7 +167,11 @@ function WeatherPage({data, setData}) {
             </section>
 
             {showLocationSearch && (
-                <LocationSearch data={data} setData={setData} setShowLocationSearch={setShowLocationSearch}/>
+                <LocationSearch 
+                    setShowLocationSearch={setShowLocationSearch} 
+                    setInputCoords={setInputCoords}
+                    fetchAndConvertWeather={fetchAndConvertWeather}
+                />
             )}       
         </>
     )

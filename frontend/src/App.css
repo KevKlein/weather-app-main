@@ -27,7 +27,7 @@
     --lime_green: #92bb23;             
     --violet: #8845c3;             
 
-    --header-height:60px;
+    --header-height:50px;
     --content-max-width: 1150px; /* used by section and nav */ 
   }
 
@@ -79,7 +79,6 @@ header {
   align-items: center;     /* vertical centering */
   background-color:var(--cloud);
   border: 2px solid var(--forest);
-  position: fixed;
   top: 0%;
   width: 100%;
   padding: 0.5rem 1rem;
@@ -90,15 +89,11 @@ header {
 }
 
 .header-icon {
-  /* font-size: 1.0em; */
-  /* color: var(--cerulean); */
   vertical-align: middle;
-  /* margin-right: 0.2rem; */
 }
 
 main {    
   flex: 1;
-  padding-top: var(--header-height);
 }
 
 section {
@@ -107,14 +102,11 @@ section {
   padding: 1% 2% 1%;
   max-width: var(--content-max-width);
 }
+
 article {
-  /* padding-top: 1%; */
-}
-  #topic1 {}
-  #topic2 {}
-div {
 }
 
+/* Section for user to choose a location by various means */
 .location {
   /* margin: 0 5%; */
   padding-bottom: 1%;
@@ -122,14 +114,6 @@ div {
 
 .location-outer {
   padding-left: 2%;
-}
-
-.get-location-header {
-  color: var(--forest-semi-transparent);
-  margin-top: 10px;
-  font-size: large;
-  margin-left: 0;
-  padding-bottom: 0.5%;
 }
 
 .get-location-header {
@@ -171,41 +155,28 @@ div {
   font-size: 1rem;
 }
 
-.enterCoordinatesWrapper {
-
+/* ----- buttons in location section ----- */
+.enterCoordinatesButton, .geolocationButton, .locationSearchButton{
+  height: 50px;
 }
 
-.geolocationWrapper, .prevWrapper{
-  padding-left: 2%;
+.enterCoordinatesWrapper, .geolocationWrapper, .locationSearchWrapper {
+  padding-right: 2.5%;
+}
+
+.enterCoordinatesButton {
+  width: 120px;
 }
 
 .geolocationButton {
   width: 50px;
-  height: 50px;
 }
 
 .usegeolocationButton svg{
 }
 
-.prevButton {
-  background-color: var(--cloud);
-  color: var(--cerulean);
-}
-
-.prevButton:hover {
-}
-
 .helpSection {
   max-width: 800px;
-}
-
-aside {
-  width: 40%;
-  padding: 1% 0 2% 2%;
-  float: right;
-}
-aside img{
-  max-width: 300px;
 }
 
 footer {
@@ -227,7 +198,7 @@ footer p {
 
 /* */
 
-/*  ----- Navigation ----- Override text links for navigation only.  */
+/*  ----- Navigation -----  */
 
 nav {
   padding: 1% 1% 1%;

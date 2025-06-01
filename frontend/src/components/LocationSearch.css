@@ -96,3 +96,31 @@
 }
 .search-submit-button:hover {
 }
+
+/* ------ Search Results ----- */
+.search-results {
+  margin-top: 15px;
+  border: var(--forest-semi-transparent) 1px solid;
+  border-radius: 5px;
+  padding: 0;
+}
+
+.search-result-entry {
+  border-bottom: var(--forest-semi-transparent) 1px solid;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+.search-result-entry:last-child {
+  border-bottom: none;
+}
+
+.search-result-entry:hover {
+  background-color: var(--sky-transparent);
+}
+
+.search-result-entry p {
+  margin: 0 0 0 20px;
+  padding: 2px;
+  color: var(--forest-semi-transparent);
+}

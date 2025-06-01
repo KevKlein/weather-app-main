@@ -7,7 +7,7 @@ import { useCallback } from "react";
  *   Based on:
  *   https://www.w3schools.com/html/html5_geolocation.asp
  */
-export function useGeolocation({ setData, enterWeatherData }) {
+export function useGeolocation({ setData, fetchAndConvertWeather }) {
     const handleGeolocationButton = useCallback(() => {
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by this browser.");
@@ -19,7 +19,7 @@ export function useGeolocation({ setData, enterWeatherData }) {
                 const lat = position.coords.latitude;
                 const lon = position.coords.longitude;
                 // fetch and parse weatherData
-                enterWeatherData(lat, lon);  
+                fetchAndConvertWeather(lat, lon);  
                 // update lat & lon form fields and save in data.current
                 setData(d => ({
                     ...d,
@@ -32,7 +32,7 @@ export function useGeolocation({ setData, enterWeatherData }) {
                 alert("Geolocation didn't work.");
             }
         );
-    }, [setData, enterWeatherData]);
+    }, [setData, fetchAndConvertWeather]);
 
     return { handleGeolocationButton };
 }
