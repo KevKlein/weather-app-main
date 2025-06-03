@@ -1,5 +1,6 @@
 import { FaStar } from "react-icons/fa";
 import { LuTrash2 } from "react-icons/lu";
+import { round } from "../utils/util";
 
 function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWeather}) {
     const { recents } = data;
@@ -8,7 +9,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
         const { city, state, country, lat, lon } = locationEntry;
         console.log('fav handlelocationchoice: ', locationEntry);
         fetchAndConvertWeather(lat, lon, { city, state, country });
-        setInputCoords({ lat, lon });
+        setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     }
 
     function addFavorite(locationEntry) {

@@ -15,11 +15,8 @@ const colors = {
     red : '#FA3830',
 };
 
-export default function WeatherChart({ units, data }) {
-    const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false); // checkboxes visible?
-    const [selectedMetrics, setSelectedMetrics] = useState(
-         new Set(['cloudCover', 'temperature', 'precipitation', ])
-    );
+export default function WeatherChart({ units, data, selectedMetrics, setSelectedMetrics}) {
+    const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false);
 
     const precipUnitLabel = (units.precipitation === 'inch') ? 'inches' : units.precipitation;
     const allMetrics = [

@@ -374,6 +374,7 @@ h4 {
 /*  ----- Header for weather chart ------ */
 .forecast-header {
   display: flex;
+  padding-bottom: 5px;
 }
 
 

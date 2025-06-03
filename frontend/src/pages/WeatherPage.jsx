@@ -8,11 +8,16 @@ import { convertUnits } from "../utils/ConvertUnits";
 import { useGeolocation } from "../utils/UseGeolocation";
 import LocationSearch from "../components/LocationSearch";
 import FavAndRecentLocations from "../components/FavAndRecentLocations";
+import { round } from "../utils/util";
 
 function WeatherPage({data, setData}) {
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);
     const [ inputCoords, setInputCoords] = useState({ lat: '', lon: '' })
     const { desiredUnits, current, recents } = data;
+    const [selectedMetrics, setSelectedMetrics] = useState(
+         new Set(['cloudCover', 'temperature', 'precipitation', ])
+    );
+
     const defaultUnits = {
         temperature:    '°C',
         precipitation:  'mm',
@@ -38,7 +43,7 @@ function WeatherPage({data, setData}) {
             newEntry = { city, state, country, lat, lon, isCity: true };
         } else {
             newEntry = { 
-                city: `lat: ${Number(lat).toFixed(2)}, lon: ${Number(lon).toFixed(2)}`,
+                city: `lat: ${round(lat, 2)}, lon: ${round(lon, 2)}`,
                 state: "", 
                 country: "", 
                 lat, 
@@ -63,10 +68,6 @@ function WeatherPage({data, setData}) {
         }));
         setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     };
-
-    function round(num, places) {
-        return Number(Number(num).toFixed(places));
-    }
 
 
     /* Update latitude if user types part of valid number */
@@ -190,9 +191,19 @@ function WeatherPage({data, setData}) {
             <section className="forecast-section">
                 <div className="forecast-header">
                     <h3>Forecast</h3>
-                    <WeatherPreferences data={data} setData={setData} convertUnits={convertUnits} />
+                    <WeatherPreferences 
+                        data={data} 
+                        setData={setData} 
+                        convertUnits={convertUnits} 
+                        selectedMetrics={selectedMetrics}
+                    />
                 </div>
-                <WeatherChart units={current.units} data={current.weather}/> 
+                <WeatherChart 
+                    units={current.units} 
+                    data={current.weather} 
+                    selectedMetrics={selectedMetrics} 
+                    setSelectedMetrics={setSelectedMetrics}
+                /> 
             </section>
 
             {showLocationSearch && (
