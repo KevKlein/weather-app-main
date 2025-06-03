@@ -28,7 +28,8 @@
     --violet: #8845c3;             
 
     --header-height:50px;
-    --content-max-width: 1150px; /* used by section and nav */ 
+    --content-max-width: 1150px; /* used by section and nav */
+    --aside-width: 370px;
   }
 
 /*  ----- Viewport ----- elements inherited by all remaining elements ----- */
@@ -106,6 +107,93 @@ section {
 article {
 }
 
+/* ----- WeatherPage ----- */
+.weather-top {
+  display: flex;
+  align-items: flex-start; /* both columns align at top */
+  gap: 1rem;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding-bottom: 0%;
+}
+
+.weather-top-left {
+  /* flex: 1; */
+  width: calc(100% - var(--aside-width) - 1rem);
+  min-width: 0; /* prevents overflow */
+
+}
+
+.weather-top-left h2 {
+  margin-left: 100px;
+}
+
+/*  -----  Fav and Recent Locations  ----- */
+aside {
+  width: var(--aside-width);
+  position: sticky;
+  max-height: 230px;
+  overflow-y: auto;
+  margin-top: 15px;
+  border: var(--forest-semi-transparent) 1px solid;
+  border-radius: 5px;
+}
+
+/* Recents container */
+.recents-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recents-container > h4 {
+  color: var(--forest-semi-transparent);
+  margin: 5px 0 0 5px;
+}
+
+.recents-entries {
+  border-top: var(--forest-semi-transparent) solid 1px;
+  padding: 0;
+}
+.recents-entries h4{
+  font-size: large;
+}
+.recents-entries p{
+  font-size: small;
+}
+
+/* Recents Entry */
+.recent-result-entry {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: var(--forest-semi-transparent) 1px solid;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+.recent-result-entry:last-child {
+  border-bottom: none;
+}
+.recent-result-entry:hover {
+  background-color: var(--sky-transparent);
+}
+.recent-result-entry p {
+  margin: 0 0 0 20px;
+  padding: 2px;
+  color: var(--forest-semi-transparent);
+  min-height: 15px;
+}
+.recent-buttons-container {
+  align-items: center;
+  padding: 0 10px;
+  display: flex;
+  gap: 5px;
+  font-size: x-large;
+  color: var(--cerulean);
+}
+.recent-buttons-container > *:hover {
+  color: var(--lime_green);
+}
+
 /* Section for user to choose a location by various means */
 .location {
   /* margin: 0 5%; */
@@ -175,6 +263,10 @@ article {
 .usegeolocationButton svg{
 }
 
+.forecast-section {
+  padding-top: 0;
+}
+
 .helpSection {
   max-width: 800px;
 }
@@ -235,6 +327,9 @@ nav a:hover {
   padding: 0;
 
 }
+
+
+
 
 /*  -----  Typography  ----- */
 p {}

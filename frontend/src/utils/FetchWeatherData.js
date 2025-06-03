@@ -1,4 +1,3 @@
-
 // Fetch weather data via api url to open-meteo, using current lat & lon. 
 // Data is in JSON format.
 export async function fetchWeatherData(lat, lon) {

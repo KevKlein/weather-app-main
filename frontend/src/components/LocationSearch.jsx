@@ -36,15 +36,24 @@ function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConver
         const geocodingResult = await fetchGeocoding(city, state, country, numResultsSought)
         console.log('geocoding results:', geocodingResult.locationData);
         if (geocodingResult && geocodingResult.locationData) {
-            setLocationResults(geocodingResult.locationData);
+            // locationData [{ name: '...', state: '…', country: '…', lat: …, lon: … }, ...]
+            const renamed = geocodingResult.locationData.map(item => ({
+                city: item.name,
+                state: item.state,
+                country: item.country,
+                lat: item.lat,
+                lon: item.lon
+            }));
+            setLocationResults(renamed);
         } else {
             setLocationResults([]);
         }
     };
 
     function handleLocationChoice(locationEntry) {
-        const { city: name, state, country, lat, lon } = locationEntry;
-        fetchAndConvertWeather(lat, lon);
+        // const { city: name, state, country, lat, lon } = locationEntry;
+        const { name, state, country, lat, lon } = locationEntry;
+        fetchAndConvertWeather(lat, lon, locationEntry);
         setInputCoords({ lat, lon });
         closeModal();
     }
@@ -108,7 +117,8 @@ function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConver
         { locationResults && locationResults[0] && (
             <section className="search-results">
                 {locationResults.map( (entry, index) => {
-                    const { name: city, state, country, lat, lon } = entry;
+                    // const { name: city, state, country, lat, lon } = entry;
+                    const { city, state, country, lat, lon } = entry;
                     return(
                     <div key={index} className="search-result-entry" onClick={() => handleLocationChoice(entry)}>
                         <h4>{city}</h4>

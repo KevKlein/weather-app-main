@@ -12,7 +12,14 @@ function App() {
   const [data, setData] = useState({
       desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
       current: { lat: '', lon: '', weather: [], units: {} },
+      recents: [] // entries are same shape as the dummy location entry in current
   })
+    const defaultUnits = {
+      temperature:    '°C',
+      precipitation:  'mm',
+      windSpeed:      'km/h'
+  };
+  const [ userInfo, setUserInfo ] = useState({ userId: null, favorites: [], units: defaultUnits})
 
   return (
     <Router>
