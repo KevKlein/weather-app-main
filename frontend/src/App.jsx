@@ -12,14 +12,14 @@ function App() {
   const [data, setData] = useState({
       desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
       current: { lat: '', lon: '', weather: [], units: {} },
-      recents: [] // entries are same shape as the dummy location entry in current
+      recents: [] // entries are same shape as the dummy entry in 'current'
   })
     const defaultUnits = {
       temperature:    '°C',
       precipitation:  'mm',
       windSpeed:      'km/h'
   };
-  const [ userInfo, setUserInfo ] = useState({ userId: null, favorites: [], units: defaultUnits})
+  const [ userInfo, setUserInfo ] = useState({ username: null, favorites: [], units: defaultUnits})
 
   return (
     <Router>
@@ -29,13 +29,13 @@ function App() {
             <FaDiceD20 className="header-icon" />
             Nat20 Weather
           </h1>
-          <Navigation data={data} setData = {setData}/>
+          <Navigation userInfo={userInfo} setUserInfo = {setUserInfo}/>
         </header>
 
         <main>
           <Routes>
-            <Route path="/"       element={<HomePage   />} />
-            <Route path="/weather" element={<WeatherPage data={data} setData={setData} />} />
+            <Route path="/"     element={<HomePage />} />
+            <Route path="/weather" element={<WeatherPage data={data} setData={setData} userInfo={userInfo} setUserInfo={setUserInfo}/>} />
             <Route path="/help" element={<HelpPage />} />
           </Routes>
         </main>

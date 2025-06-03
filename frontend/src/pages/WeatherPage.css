@@ -1,0 +1,116 @@
+/*   ----- Variables from App.css -----  */
+:root {
+    /*   ----- colors  -----  */
+    --cerulean: #2486DD;
+    --cloud: #F4F9FD;
+    --cloud-semi-transparent: #F4F9FDee;
+    --grey-cloud: #bccad7;
+    --sky: #72C4F3;
+    --sky-bluer: #49AFEF;
+    --sky-transparent: #72C4F366;
+    --forest: #183A41;
+    --forest-semi-transparent: #183A4199;
+    --leaf: #4F6A58;
+    --orange: #ff7300;
+    --lime_green: #92bb23;             
+    --violet: #8845c3;             
+
+    /*   ----- measurements  -----  */
+    --header-height:50px;
+    --content-max-width: 1150px; /* used by section and nav */
+    --aside-width: 370px;
+  }
+
+/* ----- WeatherPage ----- */
+.weather-top {
+  display: flex;
+  align-items: flex-start; /* both columns align at top */
+  gap: 1rem;
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding-bottom: 0%;
+}
+
+.weather-top-left {
+  /* flex: 1; */
+  width: calc(100% - var(--aside-width) - 1rem);
+  min-width: 0; /* prevents overflow */
+
+}
+
+.weather-top-left h2 {
+  margin-left: 100px;
+}
+
+/* Section for user to choose a location by various means */
+.location {
+  /* margin: 0 5%; */
+  padding-bottom: 1%;
+}
+
+.location-outer {
+  padding-left: 2%;
+}
+
+.get-location-header {
+  color: var(--forest-semi-transparent);
+  margin-top: 10px;
+  font-size: large;
+  margin-left: 0;
+  padding-bottom: 0.5%;
+}
+
+.location-input{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;      
+  align-items: center;  
+  justify-content:flex-start;
+}
+
+.location-input button {
+  margin: 0;
+}
+
+.coords-wrapper {
+  display: flex;
+  flex-direction: column;
+  margin: 0;           
+}
+
+.input-wrapper input {
+  /* padding: 1.2rem 0.5rem 0.5rem; */
+  font-size: 1rem;
+}
+
+.input-wrapper label {
+  position: absolute;
+  top: 0.5rem;
+  left: 1.5rem;
+  /* color: ; */
+  font-size: 1rem;
+}
+
+/* ----- buttons in location section ----- */
+.enterCoordinatesButton, .geolocationButton, .locationSearchButton{
+  height: 50px;
+}
+
+.enterCoordinatesWrapper, .geolocationWrapper, .locationSearchWrapper {
+  padding-right: 2.5%;
+}
+
+.enterCoordinatesButton {
+  width: 120px;
+}
+
+.geolocationButton {
+  width: 50px;
+}
+
+.usegeolocationButton svg{
+}
+
+.forecast-section {
+  padding-top: 0;
+}

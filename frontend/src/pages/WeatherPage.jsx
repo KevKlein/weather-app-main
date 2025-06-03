@@ -9,6 +9,7 @@ import { useGeolocation } from "../utils/UseGeolocation";
 import LocationSearch from "../components/LocationSearch";
 import FavAndRecentLocations from "../components/FavAndRecentLocations";
 import { round } from "../utils/util";
+import "./WeatherPage.css"
 
 function WeatherPage({data, setData}) {
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);

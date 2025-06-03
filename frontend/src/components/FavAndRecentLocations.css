@@ -1,0 +1,66 @@
+
+/*  -----  Fav and Recent Locations Aside ----- */
+aside {
+  width: var(--aside-width);
+  position: sticky;
+  max-height: 230px;
+  overflow-y: auto;
+  margin-top: 15px;
+  border: var(--forest-semi-transparent) 1px solid;
+  border-radius: 5px;
+}
+
+/* Recents container */
+.recents-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.recents-container > h4 {
+  color: var(--forest-semi-transparent);
+  margin: 5px 0 0 5px;
+}
+
+.recents-entries {
+  border-top: var(--forest-semi-transparent) solid 1px;
+  padding: 0;
+}
+.recents-entries h4{
+  font-size: large;
+}
+.recents-entries p{
+  font-size: small;
+}
+
+/* Recents Entry */
+.recent-result-entry {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: var(--forest-semi-transparent) 1px solid;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+.recent-result-entry:last-child {
+  border-bottom: none;
+}
+.recent-result-entry:hover {
+  background-color: var(--sky-transparent);
+}
+.recent-result-entry p {
+  margin: 0 0 0 20px;
+  padding: 2px;
+  color: var(--forest-semi-transparent);
+  min-height: 15px;
+}
+.recent-buttons-container {
+  align-items: center;
+  padding: 0 10px;
+  display: flex;
+  gap: 5px;
+  font-size: x-large;
+  color: var(--cerulean);
+}
+.recent-buttons-container > *:hover {
+  color: var(--lime_green);
+}

@@ -1,3 +1,5 @@
+import "./Slider.css"
+
 function Slider({data, setData, convertUnits, unit, label1, label2}) {
     const { desiredUnits } = data;
 

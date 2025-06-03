@@ -15,54 +15,6 @@
     --black-semi-transparent: #0009;
 }
 
-
-/* Overlay: dark outside the modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--black-semi-transparent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    position: relative; 
-    background-color: var(--cloud);
-    padding: 1.5rem;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
-    width: 90%;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-/* 'X' button in the top‐right of the modal */
-.modal-close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: transparent;
-  border: none;
-  color: var(--forest-semi-transparent);
-}
-
-.modal-close-button:hover {
-  color: var(--forest);
-  background-color: transparent;
-  border: none;
-}
-
 .search-types {
   display: flex;
   flex-direction: column;

@@ -1,10 +1,15 @@
 import { useState } from "react";
-import { FaX } from "react-icons/fa6";
 import { fetchGeocoding } from "../utils/FetchGeocoding";
+import Modal from "./Modal";
 import "./LocationSearch.css"
 
-
-function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConvertWeather }) {
+/**
+   * Citation:
+   * Date: 2025.6.1
+   * Based on open-meteo's search popup design
+   * https://open-meteo.com/en/docs
+   */
+function LocationSearch({setShowLocationSearch, setInputCoords, fetchAndConvertWeather}) {
     const [ locationResults, setLocationResults ] = useState([]);
     const [ inputLocation, setInputLocation] = useState({
             city: "",
@@ -12,10 +17,6 @@ function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConver
             country: ""
     });
 
-    /* Don't close the modal if the user clicks inside it */
-    const stopModalClick = e => e.stopPropagation();
-
-    /* Close the modal */
     function closeModal() {
         setShowLocationSearch(false);
     }
@@ -37,6 +38,7 @@ function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConver
         console.log('geocoding results:', geocodingResult.locationData);
         if (geocodingResult && geocodingResult.locationData) {
             // locationData [{ name: '...', state: '…', country: '…', lat: …, lon: … }, ...]
+            // rename “name” to “city” in each result
             const renamed = geocodingResult.locationData.map(item => ({
                 city: item.name,
                 state: item.state,
@@ -50,89 +52,80 @@ function LocationSearch( { setShowLocationSearch, setInputCoords, fetchAndConver
         }
     };
 
+    /* When user picks a location, get its forecast and close the modal */ 
     function handleLocationChoice(locationEntry) {
-        // const { city: name, state, country, lat, lon } = locationEntry;
-        const { name, state, country, lat, lon } = locationEntry;
+        const { city, state, country, lat, lon } = locationEntry;
         fetchAndConvertWeather(lat, lon, locationEntry);
         setInputCoords({ lat, lon });
         closeModal();
     }
 
 
-    /**
-   * Citation:
-   * Date: 2025.6.1
-   * Based on open-meteo's search popup design
-   * https://open-meteo.com/en/docs
-   */
-  return (               
-    <div className="modal-overlay" onClick={closeModal}>
-      <section className="modal-content" onClick={stopModalClick}>
-        <div className="modal-header">
-            <h3>Search Locations</h3>
-            <button type="button" className="modal-close-button" onClick={closeModal}>
-                <FaX />
+  return (
+        <Modal title="Search Locations" onClose={closeModal}>
+        <div className="search-by-city">
+            <div className="field-wrapper">
+            <label htmlFor="city">City</label>
+            <input
+                id="city"
+                type="text"
+                size={12}
+                title="Enter a city"
+                value={inputLocation.city}
+                onChange={(e) => handleFieldChange(e, "city")}
+            />
+            </div>
+            <div className="field-wrapper">
+            <label htmlFor="state">State</label>
+            <input
+                id="state"
+                type="text"
+                size={12}
+                title="Enter a state"
+                value={inputLocation.state}
+                onChange={(e) => handleFieldChange(e, "state")}
+            />
+            </div>
+            <div className="field-wrapper">
+            <label htmlFor="country">Country</label>
+            <input
+                id="country"
+                type="text"
+                size={12}
+                title="Enter a country"
+                value={inputLocation.country}
+                onChange={(e) => handleFieldChange(e, "country")}
+            />
+            </div>
+            <button
+            className="search-submit-button"
+            onClick={handleCitySearchSubmit}
+            >
+            Search
             </button>
         </div>
-        <div className="search-by-city">
-            <div field-wrapper>
-                <label htmlFor="city">City</label>
-                <input 
-                    required=''
-                    id="city"
-                    type="text" 
-                    placeholder="" 
-                    size={12}
-                    title="Enter a city"
-                    value={ inputLocation.city }
-                    onChange={e => {handleFieldChange(e, 'city')}}
-                /> 
-            </div>
-            <div field-wrapper>
-                <label htmlFor="state">State</label>
-                <input 
-                    id="state"
-                    type="text" 
-                    placeholder="" 
-                    size={12}
-                    title="Enter a state"
-                    value={ inputLocation.state }
-                    onChange={e => {handleFieldChange(e, 'state')}}
-                /> 
-            </div>
-            <div field-wrapper>
-                <label htmlFor="country">Country</label>
-                <input 
-                    id="country"
-                    type="text" 
-                    placeholder="" 
-                    size={12}
-                    title="Enter a country"
-                    value={ inputLocation.country }
-                    onChange={e => {handleFieldChange(e, 'country')}}
-                />
-            </div>
-            <button className="search-submit-button" onClick={handleCitySearchSubmit}>Search</button>
-        </div>
-        { locationResults && locationResults[0] && (
-            <section className="search-results">
-                {locationResults.map( (entry, index) => {
-                    // const { name: city, state, country, lat, lon } = entry;
+
+            {locationResults.length > 0 && (
+                <section className="search-results">
+                {locationResults.map((entry, index) => {
                     const { city, state, country, lat, lon } = entry;
-                    return(
-                    <div key={index} className="search-result-entry" onClick={() => handleLocationChoice(entry)}>
+                    return (
+                    <div
+                        key={index}
+                        className="search-result-entry"
+                        onClick={() => handleLocationChoice(entry)}
+                    >
                         <h4>{city}</h4>
                         <p>
-                            {state}, {country} ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
+                        {state}, {country} ({Number(lat).toFixed(2)},{" "}
+                        {Number(lon).toFixed(2)})
                         </p>
                     </div>
                     );
                 })}
-            </section>
-        )}
-
-      </section>
-    </div>
-  );
+                </section>
+            )}
+        </Modal>
+    );
 }
 export default LocationSearch;

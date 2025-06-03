@@ -1,6 +1,6 @@
 import { Bar, Line, Rectangle, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ComposedChart } from 'recharts';
 import { useState } from 'react';
-  
+import "./WeatherChart.css"
 
 const colors = {
     orange: '#ff7300',           
@@ -14,6 +14,7 @@ const colors = {
     violet: '#8845c3',         
     red : '#FA3830',
 };
+
 
 export default function WeatherChart({ units, data, selectedMetrics, setSelectedMetrics}) {
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false);

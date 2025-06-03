@@ -10,9 +10,11 @@
   @import url('https://fonts.googleapis.com/css2?family=Oxygen:wght@300;400;700&display=swap');
   @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
 
+/* Citation: based on code for the OSU CS290 portfolio website */
+
 /*   ----- Variables  -----  */
 :root {
-  /*   ----- colors  -----  */
+    /*   ----- colors  -----  */
     --cerulean: #2486DD;
     --cloud: #F4F9FD;
     --cloud-semi-transparent: #F4F9FDee;
@@ -27,6 +29,7 @@
     --lime_green: #92bb23;             
     --violet: #8845c3;             
 
+    /*   ----- measurements  -----  */
     --header-height:50px;
     --content-max-width: 1150px; /* used by section and nav */
     --aside-width: 370px;
@@ -107,165 +110,6 @@ section {
 article {
 }
 
-/* ----- WeatherPage ----- */
-.weather-top {
-  display: flex;
-  align-items: flex-start; /* both columns align at top */
-  gap: 1rem;
-  max-width: var(--content-max-width);
-  margin: 0 auto;
-  padding-bottom: 0%;
-}
-
-.weather-top-left {
-  /* flex: 1; */
-  width: calc(100% - var(--aside-width) - 1rem);
-  min-width: 0; /* prevents overflow */
-
-}
-
-.weather-top-left h2 {
-  margin-left: 100px;
-}
-
-/*  -----  Fav and Recent Locations  ----- */
-aside {
-  width: var(--aside-width);
-  position: sticky;
-  max-height: 230px;
-  overflow-y: auto;
-  margin-top: 15px;
-  border: var(--forest-semi-transparent) 1px solid;
-  border-radius: 5px;
-}
-
-/* Recents container */
-.recents-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.recents-container > h4 {
-  color: var(--forest-semi-transparent);
-  margin: 5px 0 0 5px;
-}
-
-.recents-entries {
-  border-top: var(--forest-semi-transparent) solid 1px;
-  padding: 0;
-}
-.recents-entries h4{
-  font-size: large;
-}
-.recents-entries p{
-  font-size: small;
-}
-
-/* Recents Entry */
-.recent-result-entry {
-  display: flex;
-  justify-content: space-between;
-  border-bottom: var(--forest-semi-transparent) 1px solid;
-  padding: 5px 15px;
-  cursor: pointer;
-}
-.recent-result-entry:last-child {
-  border-bottom: none;
-}
-.recent-result-entry:hover {
-  background-color: var(--sky-transparent);
-}
-.recent-result-entry p {
-  margin: 0 0 0 20px;
-  padding: 2px;
-  color: var(--forest-semi-transparent);
-  min-height: 15px;
-}
-.recent-buttons-container {
-  align-items: center;
-  padding: 0 10px;
-  display: flex;
-  gap: 5px;
-  font-size: x-large;
-  color: var(--cerulean);
-}
-.recent-buttons-container > *:hover {
-  color: var(--lime_green);
-}
-
-/* Section for user to choose a location by various means */
-.location {
-  /* margin: 0 5%; */
-  padding-bottom: 1%;
-}
-
-.location-outer {
-  padding-left: 2%;
-}
-
-.get-location-header {
-  color: var(--forest-semi-transparent);
-  margin-top: 10px;
-  font-size: large;
-  margin-left: 0;
-  padding-bottom: 0.5%;
-}
-
-.location-input{
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;      
-  align-items: center;  
-  justify-content:flex-start;
-}
-
-.location-input button {
-  margin: 0;
-}
-
-.coords-wrapper {
-  display: flex;
-  flex-direction: column;
-  margin: 0;           
-}
-
-.input-wrapper input {
-  /* padding: 1.2rem 0.5rem 0.5rem; */
-  font-size: 1rem;
-}
-
-.input-wrapper label {
-  position: absolute;
-  top: 0.5rem;
-  left: 1.5rem;
-  /* color: ; */
-  font-size: 1rem;
-}
-
-/* ----- buttons in location section ----- */
-.enterCoordinatesButton, .geolocationButton, .locationSearchButton{
-  height: 50px;
-}
-
-.enterCoordinatesWrapper, .geolocationWrapper, .locationSearchWrapper {
-  padding-right: 2.5%;
-}
-
-.enterCoordinatesButton {
-  width: 120px;
-}
-
-.geolocationButton {
-  width: 50px;
-}
-
-.usegeolocationButton svg{
-}
-
-.forecast-section {
-  padding-top: 0;
-}
 
 .helpSection {
   max-width: 800px;
@@ -288,10 +132,7 @@ footer p {
   margin: 5px;
 }
 
-/* */
-
 /*  ----- Navigation -----  */
-
 nav {
   padding: 1% 1% 1%;
   display: flex;
@@ -327,9 +168,6 @@ nav a:hover {
   padding: 0;
 
 }
-
-
-
 
 /*  -----  Typography  ----- */
 p {}
@@ -371,178 +209,6 @@ h4 {
   font-style: normal;
 }
   
-/*  ----- Header for weather chart ------ */
-.forecast-header {
-  display: flex;
-  padding-bottom: 5px;
-}
-
-
-.weatherSliders {
-  padding-left: 7%;
-  display: flex;
-  gap: 1.3rem;
-}
-
-/* ----- Sliders ----- */
-/* Citation: CSS and JS for slider
-    Date: 2025.5.30
-    Adapted from:
-    https://www.w3schools.com/howto/howto_css_switch.asp */
-
-.toggle-container {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-
-/* The switch - the box around the slider */
-.switch {
-  position: relative;
-  display: inline-block;
-  width: 32px;
-  height: 18px;
-}
-
-/* Hide default HTML checkbox */
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* The slider */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-/* The knob of the slider */
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 15px;
-  width: 15px;
-  left: 1px;
-  bottom: 1px;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-.switch.temperature  .slider:before {
-    background-color: var(--orange); 
-}
-.switch.precipitation  .slider:before {
-    background-color: var(--cerulean); 
-}
-.switch.windSpeed  .slider:before {
-    background-color: var(--violet); 
-}
-
-
-.temperature.active-label {
-  color: var(--orange);
-  text-shadow: 0px 1px 0px rgba(0, 0, 0, 0.5);
-}
-.precipitation.active-label {
-  color: var(--cerulean);
-}
-.windSpeed.active-label {
-  color: var(--violet);
-}
-
-input:checked + .slider {
-  /* background-color: var(--cerulean); */
-}
-
-input:focus + .slider {
-  /* box-shadow: 0 0 1px var(--cerulean); */
-}
-
-input:checked + .slider:before {
-  -webkit-transform: translateX(15px);
-  -ms-transform: translateX(15px);
-  transform: translateX(15px);
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 17px;
-}
-.slider.round:before {
-  border-radius: 50%;
-}
-
-/*  ----- Weather Chart ------ */
-.weather-container {
-  display: flex;
-  width: 100%; 
-  height: 310px;
-  padding: 0px;
-  /* border: red 2px solid; */
-
-}
-
-.weather-chart {
-  height: 300px;
-  /* border: green 2px solid; */
-}
-
-.weather-legend {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-left: 1rem;
-  padding-top: 0.5rem;
-  height: 300px;
-  width: 200px;
-}
-
-.weather-legend-checkboxes {
-  font-size: 0.9rem;
-  flex-grow: 1;
-}
-
-.weather-legend-label {
-  display: block;
-  margin-bottom: 0.25rem;
-}
-
-.weather-legend-item {
-  display: block;
-  margin-bottom: 0.0rem;
-  margin-left: 1.1rem;
-  line-height: 1.27rem;
-}
-
-.show-additional-metrics-button {
-  padding: 0.4rem 0.6rem;
-  font-size: 0.85rem;
-  cursor: pointer;
-  border-radius: 4px;
-  border: 1px solid var(--grey-cloud);
-  background-color: var(--cloud);
-}
-
-.show-additional-metrics-button:hover {
-  background-color: var(--sky);
-  border: 1px solid var(--forest);
-}
-
-.weatherChartFailMessage {
-  padding: 2%;
-  font-size: large;
-  color: var(--forest-semi-transparent);
-}
 
 /*  ----- Form ----- */
 form {}
@@ -595,9 +261,7 @@ button:hover {
   cursor: pointer;
 }
 
-
 select {}
-
 
 :required:invalid { 
   border: 2px solid var(--red); 
@@ -610,7 +274,6 @@ select {}
 input:invalid { 
   border: 2px solid var(--red); 
 }
-
 
 .required:after{
   content:" *";
