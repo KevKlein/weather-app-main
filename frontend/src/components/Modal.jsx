@@ -1,8 +1,7 @@
-// components/Modal.jsx
 import { FaX } from "react-icons/fa6";
 import "./Modal.css";
 
-export default function Modal({ title, onClose, children }) {
+function Modal({ title, onClose, children }) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <section className="modal-content" onClick={e => e.stopPropagation()}>
@@ -12,8 +11,11 @@ export default function Modal({ title, onClose, children }) {
             <FaX />
           </button>
         </div>
-        <div className="modal-body">{children}</div>
+        <div className="modal-body">
+            {children /* child components go here */} 
+        </div>
       </section>
     </div>
   );
 }
+export default Modal;

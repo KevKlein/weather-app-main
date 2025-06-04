@@ -5,7 +5,7 @@ import { fetchFavorites, addFavorite, removeFavorite } from "../utils/UserPrefer
 import "./FavAndRecentLocations.css"
 
 
-function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWeather, username}) {
+function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWeather, userInfo}) {
     const { recents } = data;
 
     function handleLocationChoice(locationEntry) {
@@ -15,7 +15,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
         setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     }
 
-    function addFavorite(username, locationEntry) {
+    function handleAddFavorite(username, locationEntry) {
         addFavorite(username, locationEntry)
     }
 
@@ -54,7 +54,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
                                     <div className="recent-buttons-container">
                                         <FaStar   onClick={(e) => {
                                             e.stopPropagation();
-                                            addFavorite(entry);
+                                            handleAddFavorite(entry);
                                             }} 
                                         />
                                         <LuTrash2 onClick={(e) => {

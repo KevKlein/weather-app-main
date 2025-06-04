@@ -61,49 +61,46 @@ function LocationSearch({setShowLocationSearch, setInputCoords, fetchAndConvertW
     }
 
 
-  return (
+    return (
         <Modal title="Search Locations" onClose={closeModal}>
-        <div className="search-by-city">
-            <div className="field-wrapper">
-            <label htmlFor="city">City</label>
-            <input
-                id="city"
-                type="text"
-                size={12}
-                title="Enter a city"
-                value={inputLocation.city}
-                onChange={(e) => handleFieldChange(e, "city")}
-            />
+            <div className="search-by-city">
+                <div className="field-wrapper">
+                    <label htmlFor="city">City</label>
+                    <input
+                        id="city"
+                        type="text"
+                        size={12}
+                        title="Enter a city"
+                        value={inputLocation.city}
+                        onChange={(e) => handleFieldChange(e, "city")}
+                    />
+                </div>
+                <div className="field-wrapper">
+                    <label htmlFor="state">State</label>
+                    <input
+                        id="state"
+                        type="text"
+                        size={12}
+                        title="Enter a state"
+                        value={inputLocation.state}
+                        onChange={(e) => handleFieldChange(e, "state")}
+                    />
+                </div>
+                <div className="field-wrapper">
+                    <label htmlFor="country">Country</label>
+                    <input
+                        id="country"
+                        type="text"
+                        size={12}
+                        title="Enter a country"
+                        value={inputLocation.country}
+                        onChange={(e) => handleFieldChange(e, "country")}
+                    />
+                </div>
+                <button className="search-submit-button" onClick={handleCitySearchSubmit}>
+                    Search
+                </button>
             </div>
-            <div className="field-wrapper">
-            <label htmlFor="state">State</label>
-            <input
-                id="state"
-                type="text"
-                size={12}
-                title="Enter a state"
-                value={inputLocation.state}
-                onChange={(e) => handleFieldChange(e, "state")}
-            />
-            </div>
-            <div className="field-wrapper">
-            <label htmlFor="country">Country</label>
-            <input
-                id="country"
-                type="text"
-                size={12}
-                title="Enter a country"
-                value={inputLocation.country}
-                onChange={(e) => handleFieldChange(e, "country")}
-            />
-            </div>
-            <button
-            className="search-submit-button"
-            onClick={handleCitySearchSubmit}
-            >
-            Search
-            </button>
-        </div>
 
             {locationResults.length > 0 && (
                 <section className="search-results">
@@ -117,8 +114,7 @@ function LocationSearch({setShowLocationSearch, setInputCoords, fetchAndConvertW
                     >
                         <h4>{city}</h4>
                         <p>
-                        {state}, {country} ({Number(lat).toFixed(2)},{" "}
-                        {Number(lon).toFixed(2)})
+                            {state}, {country} ({Number(lat).toFixed(2)},{" "}{Number(lon).toFixed(2)})
                         </p>
                     </div>
                     );
