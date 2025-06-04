@@ -1,66 +1,78 @@
 import { useState } from "react";
 import Modal from "./Modal";
+import { fetchFavorites, fetchUnits } from '../utils/UserPreferences';
 import "./Login.css"
 
 function LoginModal({ closeModal, userInfo, setUserInfo }) {
     const [ userInput, setUserInput ] = useState({username: '', password: ''})
     const [ isRegistering, setIsRegistering ] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('');
 
     function handleUsernameChange(e) {
         const newValue = e.target.value;
         if (newValue.length < 16){
-            setUserInput({
-                ...userInput,
-                username: newValue
-            });
+            setUserInput(u => ({ ...u, username: newValue }));
         }
     }
     function handlePasswordChange(e) {
         const newValue = e.target.value;
-        setUserInput({
-            ...userInput,
-            password: newValue
-        })
+        setUserInput(u => ({ ...u, password: newValue }));
     }
 
-    function attemptLogin() {
-        if (true) {   //update later with account validation
-            loginSuccess()
-        } else {
-            loginFailure()
+    async function attemptLogin() {
+        const { username, password } = userInput;
+        if (!username) {
+            setErrorMessage('Please enter a username');
+            return;
+        }
+        const loginSucceeded = password.length > 0;   //update later with account validation
+        if (!loginSucceeded) {
+            setErrorMessage('Invalid credentials');
+            return;
+        }
+        // If login succeeded, fetch into memory that user’s saved favorites and units from microservice:
+        try {
+            const [ savedFavorites, savedUnits ] = await Promise.all([
+                fetchFavorites(username),
+                fetchUnits(username),
+            ]);
+            setUserInfo({
+                username,
+                favorites: savedFavorites || [],
+                units: savedUnits || { temperature: '°C', precipitation: 'mm', windSpeed: 'km/h' },
+            });
+            closeModal();
+        } catch (err) {
+            console.error('Login → problem fetching prefs:', err);
+            setErrorMessage('Failed to load your preferences. Try again.');
         }
     }
 
-    function loginSuccess() {
+
+    async function attemptRegister() {
+        const { username, password } = userInput;
+        if (!username) {
+            setErrorMessage('Enter a username to register');
+            return;
+        }
+        // TODO. FAKE REGISTER LOGIC (replace with real POST /api/register)
+        const registerSucceeded = password.length > 0;  //update later with account validation
+        if (!registerSucceeded) {
+            setErrorMessage('Choose a different password');
+            return;
+        }
+        // On success, we want to create an empty “row” of preferences: default units + no favorites
+        // so call the “addFavorite” or “initUser” endpoint if needed. For now, just setUserInfo:
         setUserInfo({
-            ...info,
-            username: userInput.username,
-        })
-    }
-
-    function loginFailure() {
-        // display some kind of message to user
-    }
-
-    function attemptRegister() {
-        // TODO just use username and call it successful
-        // TODO later: do something with password after authentication microservice
-        // for now just ignore password
-    }
-
-    function registerSuccess() {
-        // put current set of user units and favorited locations into entry for the chosen username
-        // log in as that user
-        // alert: "Registered as {username}!"
-        closeModal()
-    }
-
-    function registerFailure() {
-        // put error message under password input field
+            username,
+            favorites: [],
+            units: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
+        });
+        closeModal();
     }
 
     return (
-        <Modal title="Login" onClose={closeModal}>
+        <Modal title="Login / Register" onClose={closeModal}>
             <div className="login-modal-contents">
                 <div className="fields-container">
                     <div className="field-wrapper">
@@ -71,7 +83,7 @@ function LoginModal({ closeModal, userInfo, setUserInfo }) {
                             size={12}
                             title=""
                             value={userInput.username}
-                            onChange={(e) => handleUsernameChange(e)}
+                            onChange={handleUsernameChange}
                         />
                     </div>
                     <div className="field-wrapper">
@@ -82,10 +94,11 @@ function LoginModal({ closeModal, userInfo, setUserInfo }) {
                             size={12}
                             title=""
                             value={userInput.password}
-                            onChange={(e) => handlePasswordChange(e)}
+                            onChange={handlePasswordChange}
                         />
                     </div>
                 </div>
+                {errorMessage && <p className="login-error">{errorMessage}</p>}
                 <div className="button-container">
                     <button className="login-mode-button" onClick={e => attemptLogin()}>
                         login
