@@ -16,17 +16,22 @@ function HomePage(){
     const navigate = useNavigate();
 
     return (
-        <><section>
-            <article>                  
-                {/* <i FiSun /> <i FaDiceD20 /> <i WiDayRainWind /> */}
-                <h2> Nat20 Weather</h2>
-                <p>Nat20 Weather provides detailed hourly weather forecasting for any location in the world. Get the weather by latitude and longitude, or have your browser get your coordinates for you.</p>
-                <button onClick={() => navigate('/weather')}>
-                    Get Your Forecast
-                </button>
-                
-            </article>
-        </section></>
+        <>
+            <section className='home-section'>
+                <article>                  
+                    {/* <i FiSun /> <i FaDiceD20 /> <i WiDayRainWind /> */}
+                    <h2> Nat20 Weather</h2>
+                    <p>Nat20 Weather provides detailed hourly weather forecasting for any location in the world. Get the weather by latitude and longitude, or have your browser get your coordinates for you. Create an account so you can save your favorite locations and preferred units for next time.</p>
+                    <div>
+                        <button onClick={() => navigate('/weather')}>
+                            Get Your Forecast
+                        </button>
+                    </div>
+                    
+                    
+                </article>
+            </section>
+        </>
     )
 }
 

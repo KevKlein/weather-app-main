@@ -21,6 +21,7 @@ export async function addFavorite(username, loc) {
   return res.ok ? (await res.json()).favorites : [];
 }
 
+/* Delete a location from the user's saved favorites. */
 export async function removeFavorite(username, lat, lon) {
   const url = `http://localhost:${PORT}/api/favorites`;
   const res = await fetch(url, {
@@ -50,4 +51,15 @@ export async function updateUnits(username, newUnits) {
     body: JSON.stringify({ username, units: newUnits })
   });
   return res.ok ? (await res.json()).units : {};
+}
+
+/* Delete a user's saved information */
+export async function deleteUser(username) {
+  const url = `http://localhost:${PORT}/api/delete-user`;
+  const res = await fetch(url, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username })
+  });
+  return res.ok ? (await res.json()).message : '';
 }

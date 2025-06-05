@@ -15,21 +15,11 @@
     --black-semi-transparent: #0009;
 }
 
-.search-types {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.field-wrapper {
-  display: flex;
-  flex-direction: column;
-}
-
 .search-by-city {
   display: flex;
   gap: 0.5rem;
   flex-wrap: wrap;
+  width: 450px;
 }
 
 .search-by-city input {
@@ -40,9 +30,14 @@
   border-radius: 4px;
 }
 
+.field-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .search-submit-button {
   align-self: flex-start;
-  /* padding: 0.5rem 1rem; */
+  padding: 0.5rem 1rem;
   font-size: 1rem;
   cursor: pointer;
 }

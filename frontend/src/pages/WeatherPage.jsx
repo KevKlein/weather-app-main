@@ -16,7 +16,7 @@ import FavAndRecentLocations from "../components/FavAndRecentLocations";
 import "./WeatherPage.css"
 
 function WeatherPage({ data, setData, userInfo, setUserInfo }) {
-    const { desiredUnits, current, recents } = data;
+    const { desiredUnits, current, recents, favorites } = data;
     const { username } = userInfo
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);
     const [ inputCoords, setInputCoords] = useState({ lat: '', lon: '' })
@@ -41,6 +41,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                     apiFetchFavorites(username),
                     apiFetchUnits(username),
                 ]);
+                console.log(`apifetchfavorits`, savedFavorites)
                 setData(d => ({
                     ...d,
                     favorites: savedFavorites,
@@ -97,6 +98,8 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
         const filtered = recents.filter((loc) => !(loc.lat === lat && loc.lon === lon));
         const newRecents = [newEntry, ...filtered];
         console.log('newrecents: ', newRecents);
+        console.log('newfavs: ', data.favorites);
+
 
         // save weather data and recent location, display coords in input fields
         setData(d => ({
@@ -206,17 +209,15 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                             </div>
                         </article>
                     </div>
-                    {recents && recents[0] && (
-                        <aside className="fav-and-recents-aside">
-                            <FavAndRecentLocations 
-                                data={data} 
-                                setData={setData} 
-                                setInputCoords={setInputCoords} 
-                                fetchAndConvertWeather={fetchAndConvertWeather}
-                                userInfo={userInfo}
-                            />
-                        </aside>
-                    )}
+                    <aside className="fav-and-recents-aside">
+                        <FavAndRecentLocations 
+                            data={data} 
+                            setData={setData} 
+                            setInputCoords={setInputCoords} 
+                            fetchAndConvertWeather={fetchAndConvertWeather}
+                            userInfo={userInfo}
+                        />
+                    </aside>
                 </div>
             </section>
             <section className="forecast-section">

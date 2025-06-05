@@ -68,7 +68,7 @@ body {       /* Can alternatively define in html {}. */
   font-family:'Oxygen', serif;
 }
 
-body.homepage section{
+.home-section{
   background-color: transparent;
 }
 

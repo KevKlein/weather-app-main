@@ -30,7 +30,12 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
     async function handleAddFavorite(locationEntry) {
         if (!username) return; // must be logged in
         const { lat, lon } = locationEntry;
-        const newFavs = await apiAddFavorite(username, locationEntry);
+        const locationEntryWithNums = {
+            ...locationEntry,
+            lat: Number(locationEntry.lat),
+            lon: Number(locationEntry.lon),
+        };
+        const newFavs = await apiAddFavorite(username, locationEntryWithNums);
         // The microservice returns the updated list of favorites.
         setData(d => ({
             ...d,
@@ -38,7 +43,6 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
             recents: d.recents.filter(loc => !(loc.lat === lat && loc.lon === lon)),
         }));
     }
-
     
     /** When someone clicks a Favorite Location's trashcan, 
      *  remove it from the microservice and update state
@@ -66,7 +70,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
 
     return (
         <div className="fav-and-recents-outer">
-            { favorites && favorites[0] && (
+            {(
                 <div className="fr-container">
                     <h4><FaRegStar />Favorite Locations</h4>
                     <div className="fr-entries">
@@ -101,7 +105,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
                     </div>
                 </div>
             )}
-            { recents && recents[0] && (
+            {(
                 <div className="fr-container">
                     <h4><IoLocationOutline/>Recent Locations</h4>
                     <div className="fr-entries">

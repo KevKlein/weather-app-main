@@ -1,7 +1,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import { fetchFavorites, fetchUnits } from '../utils/UserPreferences';
-import "./Login.css"
+import "./LoginModal.css"
 
 function LoginModal({ closeModal, userInfo, setUserInfo }) {
     const [ userInput, setUserInput ] = useState({username: '', password: ''})
@@ -100,10 +100,10 @@ function LoginModal({ closeModal, userInfo, setUserInfo }) {
                 {errorMessage && <p className="login-error">{errorMessage}</p>}
                 <div className="button-container">
                     <button className="login-mode-button" onClick={e => attemptLogin()}>
-                        login
+                        Login
                     </button>
                     <button className="register-mode-button" onClick={e => attemptRegister()}>
-                        register
+                        Register
                     </button>
                 </div>
             </div>

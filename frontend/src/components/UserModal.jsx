@@ -1,26 +1,33 @@
 import { useState } from "react";
+import { deleteUser as apiDeleteUser } from "../utils/UserPreferences";
 import Modal from "./Modal";
-// import "./Login.css"
+import "./UserModal.css"
 
 function UserModal({ closeModal, userInfo, setUserInfo }) {
     const { username } = userInfo
-    const [ userInput, setUserInput ] = useState({name: '', password: ''})
+    const defaultUnits = { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' };
 
     function handleLogout() {
-        setUserInfo({ username: null, favorites: [], units: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' } });
+        setUserInfo({ username: null, favorites: [], units: defaultUnits});
         closeModal();
     }
 
+    function handleDeleteUser() {
+        apiDeleteUser(username);
+        handleLogout();
+    }
+
     return (
-        <Modal title="Login" onClose={closeModal}>
-            <h3 className="username">username</h3>
-            <div className="">
-                <button onClick={handleLogout}>
-                    logout
-                </button>
-                <button>
-                    delete account
-                </button>
+        <Modal title={username} onClose={closeModal}>
+            <div className="user-modal-contents">
+                <div className="button-container">
+                    <button onClick={handleLogout}>
+                        Logout
+                    </button>
+                    <button onClick={handleDeleteUser}>
+                        Delete Account
+                    </button>
+                </div>
             </div>
         </Modal>
     );

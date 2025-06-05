@@ -29,6 +29,7 @@
   max-width: var(--content-max-width);
   margin: 0 auto;
   padding-bottom: 0%;
+  min-height: 180px;
 }
 
 .weather-top-left {

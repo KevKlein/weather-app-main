@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { FaDiceD20 } from 'react-icons/fa'
 import Navigation from './components/Navigation.jsx'
 import HomePage from './pages/HomePage'
 import WeatherPage from './pages/WeatherPage.jsx'
@@ -15,6 +14,7 @@ import {
     updateUnits as apiUpdateUnits,
 } from './utils/UserPreferences';
 import './App.css'
+import { FaDiceD20 } from 'react-icons/fa'
 import { FaUser } from "react-icons/fa6";
 
 
@@ -39,7 +39,11 @@ function App() {
   const [showUserModal, setShowUserModal] = useState(null);
 
   function closeModal() {
-      setShowUserModal(false);
+    setShowUserModal(false);
+  }
+
+  function handleLoginButton() {
+    setShowUserModal('login');
   }
 
   // Default “no user logged in” behavior: clear out favorites & units
@@ -83,7 +87,7 @@ function App() {
               ? (<button className="nav-login-button" onClick={() => setShowUserModal('userAccount')}>
                   <FaUser /> {userInfo.username}
                 </button>) 
-              : (<button className="nav-login-button" onClick={() => setShowUserModal('login')}>
+              : (<button className="nav-login-button" onClick={handleLoginButton}>
                   <FaUser /> login
                 </button>)
             }
@@ -92,7 +96,7 @@ function App() {
 
         <main>
           <Routes>
-            <Route path="/"     element={<HomePage />} />
+            <Route path="/" element={<HomePage /> } />
             <Route path="/weather" element={<WeatherPage data={data} setData={setData} userInfo={userInfo} setUserInfo={setUserInfo}/>} />
             <Route path="/help" element={<HelpPage />} />
           </Routes>
