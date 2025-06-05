@@ -55,14 +55,13 @@ function LoginModal({ closeModal, userInfo, setUserInfo }) {
             setErrorMessage('Enter a username to register');
             return;
         }
-        // TODO. FAKE REGISTER LOGIC (replace with real POST /api/register)
+        // TODO (replace with real POST /api/register)
         const registerSucceeded = password.length > 0;  //update later with account validation
         if (!registerSucceeded) {
             setErrorMessage('Choose a different password');
             return;
         }
-        // On success, we want to create an empty “row” of preferences: default units + no favorites
-        // so call the “addFavorite” or “initUser” endpoint if needed. For now, just setUserInfo:
+        // On success, put an empty set of preferences in state: default units + no favorites
         setUserInfo({
             username,
             favorites: [],

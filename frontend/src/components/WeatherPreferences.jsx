@@ -1,36 +1,43 @@
 import Slider from "./Slider";
 
-function WeatherPreferences({data, setData, convertUnits, selectedMetrics}) {
+function WeatherPreferences({data, setData, userInfo, setUserInfo, convertUnits, selectedMetrics}) {
 
     return (
        <div className="weatherSliders">
-            { data.current.weather[0] && ((selectedMetrics.has('temperature') || selectedMetrics.has('apparentTemp'))) && (
+            { data.current.weather[0] 
+              && ((selectedMetrics.has('temperature') || selectedMetrics.has('apparentTemp'))) && (
                 <Slider 
-                    unit='temperature' 
+                    unitKey='temperature' 
                     label1='°F' 
                     label2='°C' 
                     data={data} 
                     setData={setData} 
+                    userInfo={userInfo}
+                    setUserInfo={setUserInfo}
                     convertUnits={convertUnits} 
                 />
             )}
             { data.current.weather[0] && selectedMetrics.has('precipitation') && (
                 <Slider 
-                    unit='precipitation' 
+                    unitKey='precipitation' 
                     label1='inches' 
                     label2='mm' 
                     data={data} 
-                    setData={setData} 
+                    setData={setData}
+                    userInfo={userInfo}
+                    setUserInfo={setUserInfo}
                     convertUnits={convertUnits} 
                 />
             )}
             { data.current.weather[0] && selectedMetrics.has('windSpeed') && (
                 <Slider 
-                    unit='windSpeed' 
+                    unitKey='windSpeed' 
                     label1='mph' 
                     label2='km/h' 
                     data={data} 
-                    setData={setData} 
+                    setData={setData}
+                    userInfo={userInfo}
+                    setUserInfo={setUserInfo}
                     convertUnits={convertUnits} 
                 />
             )}

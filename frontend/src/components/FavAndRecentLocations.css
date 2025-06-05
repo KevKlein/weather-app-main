@@ -1,3 +1,21 @@
+:root {
+    /*   ----- colors  -----  */
+    --cerulean: #2486DD;
+    --cloud: #F4F9FD;
+    --cloud-semi-transparent: #F4F9FDee;
+    --grey-cloud: #bccad7;
+    --sky: #72C4F3;
+    --sky-bluer: #49AFEF;
+    --sky-transparent: #72C4F366;
+    --forest: #183A41;
+    --forest-semi-transparent: #183A4199;
+    --leaf: #4F6A58;
+    --orange: #ff7300;
+    --orange-semi-transparent: #ff7300aa;
+    --lime_green: #92bb23;
+    --violet: #8845c3;
+  }
+
 
 /*  -----  Fav and Recent Locations Aside ----- */
 aside {
@@ -10,57 +28,77 @@ aside {
   border-radius: 5px;
 }
 
-/* Recents container */
-.recents-container {
+/* Locations container */
+.fr-container {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.recents-container > h4 {
-  color: var(--forest-semi-transparent);
-  margin: 5px 0 0 5px;
+.fr-container svg {
+  color: var(--orange-semi-transparent);
+  font-size: larger;
 }
 
-.recents-entries {
-  border-top: var(--forest-semi-transparent) solid 1px;
+.fr-container:nth-child(2) {
+  border-top: var(--forest-semi-transparent) 1px solid;
+}
+
+.fr-container > h4 {
+  display: flex;
+  justify-content: center;
+  gap: 2%;
+  color: var(--forest-semi-transparent);
+  margin: 5px 0 0 0px;
+}
+
+.fr-entries {
   padding: 0;
 }
-.recents-entries h4{
+
+.fr-entries svg {
+  color: var(--cerulean)
+}
+
+.fr-entries h4{
   font-size: large;
 }
-.recents-entries p{
+.fr-entries p{
   font-size: small;
 }
 
-/* Recents Entry */
-.recent-result-entry {
+/* Location Entry */
+.fr-result-entry {
   display: flex;
   justify-content: space-between;
-  border-bottom: var(--forest-semi-transparent) 1px solid;
+  border-bottom: var(--grey-cloud) 1px solid;
   padding: 5px 15px;
   cursor: pointer;
 }
-.recent-result-entry:last-child {
+.fr-result-entry:first-child {
+  border-top: var(--forest-semi-transparent) solid 1px;
+}
+
+.fr-result-entry:last-child {
   border-bottom: none;
 }
-.recent-result-entry:hover {
+.fr-result-entry:hover {
   background-color: var(--sky-transparent);
 }
-.recent-result-entry p {
+.fr-result-entry p {
   margin: 0 0 0 20px;
   padding: 2px;
   color: var(--forest-semi-transparent);
   min-height: 15px;
 }
-.recent-buttons-container {
+.fr-buttons-container {
   align-items: center;
   padding: 0 10px;
   display: flex;
   gap: 5px;
-  font-size: x-large;
+  font-size: larger;
   color: var(--cerulean);
 }
-.recent-buttons-container > *:hover {
-  color: var(--lime_green);
+.fr-buttons-container > *:hover {
+  color: var(--orange-semi-transparent);
 }

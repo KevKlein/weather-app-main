@@ -25,7 +25,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
         { key: 'temperature', label: `Temperature (${units.temperature})`, color: colors.orange, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left'},
         { key: 'apparentTemp', label: `Apparent Temp (${units.temperature})`, color: colors.red, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left' },
         { key: 'precipitation', label: `Precipitation (${precipUnitLabel})`, color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: `${precipUnitLabel}`, position: 'insideLeft', orientation: 'left' },
-        { key: 'precipitationChance', label: 'Chance Precipitation (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
+        { key: 'precipitationChance', label: 'Chance Precip. (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'windSpeed', label: `Wind Speed (${units.windSpeed})`, color: colors.violet, yAxisId: 'ySpeed', yAxisLabel: `${units.windSpeed}`, position: 'insideLeft', orientation: 'left' }
     ];

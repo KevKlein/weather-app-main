@@ -18,7 +18,6 @@ import './App.css'
 import { FaUser } from "react-icons/fa6";
 
 
-
 function App() {
 
   // “data” holds all info relevant to the WeatherPage: recents, chart units, current weather, favorites

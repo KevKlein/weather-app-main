@@ -1,13 +1,22 @@
-import { FaStar } from "react-icons/fa";
+import { FaRegStar } from "react-icons/fa6";
+import { IoLocationOutline } from "react-icons/io5";
 import { LuTrash2 } from "react-icons/lu";
 import { round } from "../utils/util";
-import { fetchFavorites, addFavorite, removeFavorite } from "../utils/UserPreferences";
+import { 
+    fetchFavorites as apiFetchFavorites, 
+    addFavorite as apiAddFavorite, 
+    removeFavorite as apiRemoveFavorite
+} from "../utils/UserPreferences";
 import "./FavAndRecentLocations.css"
 
 
 function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWeather, userInfo}) {
     const { recents, favorites } = data;
+    const { username } = userInfo;
 
+    /** When the user clicks a Recent or Favorite Location entry, 
+     *  get the weather for that location again.
+     */
     function handleLocationChoice(locationEntry) {
         const { city, state, country, lat, lon } = locationEntry;
         console.log('fav handlelocationchoice: ', locationEntry);
@@ -15,101 +24,124 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
         setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     }
 
-    function handleAddFavorite(username, locationEntry) {
-        // addFavorite(username, locationEntry);  // save to user's favorites via microservice
-        // const newFavorites = fetchFavorites(username);  //should we update favorites like this? 
-        const newFavorites = [locationEntry, ...favorites];        
+    /** When the user clicks a Recent Location's star, add it to favorites microservice,
+     *  update state.favorites and delete the entry from Recent Locations
+     */
+    async function handleAddFavorite(locationEntry) {
+        if (!username) return; // must be logged in
+        const { lat, lon } = locationEntry;
+        const newFavs = await apiAddFavorite(username, locationEntry);
+        // The microservice returns the updated list of favorites.
         setData(d => ({
             ...d,
-            favorites: newFavorites,
+            favorites: newFavs,
+            recents: d.recents.filter(loc => !(loc.lat === lat && loc.lon === lon)),
         }));
-        handleRemoveRecent(locationEntry);
     }
 
+    
+    /** When someone clicks a Favorite Location's trashcan, 
+     *  remove it from the microservice and update state
+     */
+    async function handleRemoveFavorite(locationEntry) {
+        if (!username) return;  //there shouldnt even be an entry?
+        const { lat, lon } = locationEntry;
+        const newFavs = await apiRemoveFavorite(username, lat, lon);
+        setData(d => ({
+            ...d,
+            favorites: newFavs,
+        }));
+    }
+
+
+    /* When the user clicks a Recent Location's trashcan, remove it from state */
     function handleRemoveRecent(locationEntry) {
         const { lat, lon } = locationEntry;
-        const filtered = recents.filter( loc => !(loc.lat === lat && loc.lon === lon));
         setData( d => ({
             ...d,
-            recents: filtered
+            recents: d.recents.filter(loc => !(loc.lat === lat && loc.lon === lon))
         }));
     }
 
 
     return (
-       <>
-            <div className="fav-and-recents-container">
-                { favorites && favorites[0] && (
-                    <div className="favorites-container">
-                        <h4>Recent Locations</h4>
-                        <div className="favorites-entries">
-                            {favorites.map((entry, index) => {
-                                const { city, state, country, lat, lon, isCity } = entry;
-                                return (
-                                <div 
-                                    key={index} 
-                                    className="favorite-result-entry" 
-                                    onClick={() => handleLocationChoice(entry)}
-                                >
-                                    <div>
-                                        <h4>{city}</h4>
-                                        {isCity 
-                                            ? (<p>{state}, {country} ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})</p>)
-                                            : <p></p>
-                                        }
-                                    </div>
-                                    <div className="favorite-buttons-container">
-                                        <LuTrash2 onClick={(e) => {
+        <div className="fav-and-recents-outer">
+            { favorites && favorites[0] && (
+                <div className="fr-container">
+                    <h4><FaRegStar />Favorite Locations</h4>
+                    <div className="fr-entries">
+                        {favorites.map((entry, index) => {
+                            const { city, state, country, lat, lon, isCity } = entry;
+                            return (
+                            <div 
+                                key={`fav-${index}`} 
+                                className="fr-result-entry" 
+                                onClick={() => handleLocationChoice(entry)}
+                            >
+                                <div>
+                                    <h4>{city}</h4>
+                                    {isCity 
+                                        ? <p>
+                                            {state}, {country}{" "}
+                                            ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
+                                          </p>
+                                        : <p></p>
+                                    }
+                                </div>
+                                <div className="fr-buttons-container">
+                                    <LuTrash2 onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleRemoveFavorite(entry);
+                                    }}  
+                                    />
+                                </div>
+                            </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            )}
+            { recents && recents[0] && (
+                <div className="fr-container">
+                    <h4><IoLocationOutline/>Recent Locations</h4>
+                    <div className="fr-entries">
+                        {recents.map((entry, index) => {
+                            const { city, state, country, lat, lon, isCity } = entry;
+                            return (
+                            <div 
+                                key={index} 
+                                className="fr-result-entry" 
+                                onClick={() => handleLocationChoice(entry)}
+                            >
+                                <div>
+                                    <h4>{city}</h4>
+                                    {isCity 
+                                        ? <p>
+                                            {state}, {country}{" "}
+                                            ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
+                                          </p>
+                                        : <p></p>
+                                    }
+                                </div>
+                                <div className="fr-buttons-container">
+                                    <FaRegStar   onClick={(e) => {
                                             e.stopPropagation();
-                                            removeFavorite(entry);
+                                            handleAddFavorite(entry);
+                                        }}
+                                    />
+                                    <LuTrash2 onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRemoveRecent(entry);
                                         }}  
-                                        />
-                                    </div>
+                                    />
                                 </div>
-                                );
-                            })}
-                        </div>
+                            </div>
+                            );
+                        })}
                     </div>
-                )}
-                { recents && recents[0] && (
-                    <div className="recents-container">
-                        <h4>Recent Locations</h4>
-                        <div className="recents-entries">
-                            {recents.map((entry, index) => {
-                                const { city, state, country, lat, lon, isCity } = entry;
-                                return (
-                                <div 
-                                    key={index} 
-                                    className="recent-result-entry" 
-                                    onClick={() => handleLocationChoice(entry)}
-                                >
-                                    <div>
-                                        <h4>{city}</h4>
-                                        {isCity 
-                                            ? (<p>{state}, {country} ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})</p>)
-                                            : <p></p>
-                                        }
-                                    </div>
-                                    <div className="recent-buttons-container">
-                                        <FaStar   onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleAddFavorite(entry);
-                                            }}
-                                        />
-                                        <LuTrash2 onClick={(e) => {
-                                                e.stopPropagation();
-                                                handleRemoveRecent(entry);
-                                            }}  
-                                        />
-                                    </div>
-                                </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-            </div>
-       </>
+                </div>
+            )}
+        </div>
     );
 }
 export default FavAndRecentLocations;
