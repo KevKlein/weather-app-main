@@ -3,7 +3,7 @@ import { updateUnits as apiUpdateUnits } from "../utils/UserPreferences";
 import "./Slider.css"
 
 function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, label1, label2}) {
-    const { desiredUnits } = data;
+    const { units: currentUnits, weather: weatherData } = data.current;
     const { username } = userInfo
 
     async function toggleSlider() {
@@ -11,14 +11,23 @@ function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, la
             ...data.desiredUnits,
             [unitKey]: data.desiredUnits[unitKey] === label1 ? label2 : label1
         };
-        // convertUnits(units, newDesired, data.current.weather);
+        console.log(`current: `, data.current.units);
+        console.log(`current: `, currentUnits);
         console.log(`slider newunits:`, newUnits);
 
+        // convert weather data
+        const convertedData = await convertUnits(currentUnits, newUnits, weatherData);
         setData(d => ({
             ...d,
             desiredUnits: newUnits,
+            current: { 
+                ...d.current,
+                weather: convertedData ?? [],
+                units: convertedData ? newUnits : currentUnits
+            },
         }));
 
+        // 
         if (username) {
             try {
                 const updated = await apiUpdateUnits(username, newUnits);
@@ -38,23 +47,24 @@ function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, la
         }
     }
 
-    const isLabel1 = desiredUnits[unitKey] === label1;
+    const label1Active = data.desiredUnits[unitKey] === label1;
+
     return (
        <>
             <div className={`toggle-container ${unitKey}`}>
-                <span className={ isLabel1 ? `${unitKey} active-label` : unitKey}>
+                <span className={ label1Active ? `${unitKey} active-label` : unitKey}>
                     {label1}
                 </span>
                 <label className={`switch ${unitKey}`}>
                     <input 
                         type="checkbox" 
                         id={`${unitKey}-toggle`}
-                        checked={!isLabel1}
+                        checked={!label1Active}
                         onChange={() => toggleSlider()}
                     />
                     <span className="slider round"></span>
                 </label>
-                <span className={ !isLabel1 ? `${unitKey} active-label` : unitKey}>
+                <span className={ !label1Active ? `${unitKey} active-label` : unitKey}>
                     {label2}
                 </span>
             </div>

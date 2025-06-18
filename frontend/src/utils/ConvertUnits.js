@@ -1,6 +1,6 @@
 /* Convert units of weather data via POST to Microservice */
 export async function convertUnits(oldUnits, newUnits, weatherData) {
-    const url = "http://localhost:4000/api/convert-units";
+    const url = "http://localhost:36101/api/convert-units";
     console.log(`convertUnits: old `, oldUnits);
     console.log(`convertUnits: new `, newUnits);
 
@@ -36,12 +36,8 @@ export async function convertUnits(oldUnits, newUnits, weatherData) {
 function buildUnitsPayload(UIunits) {
     const payloadUnits = {
         temperature: UIunits.temperature,
-        apparent_temperature: UIunits.temperature,
         precipitation: UIunits.precipitation,
-        wind_speed_10m: UIunits.windSpeed,
-        cloud_cover:             '%',
-        precipitation_probability:'%',
-        relative_humidity_2m:    '%',
+        windSpeed: UIunits.windSpeed,
     }
     return payloadUnits;
 }

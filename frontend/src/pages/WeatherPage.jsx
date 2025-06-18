@@ -54,22 +54,22 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
     }, [username]);
 
     /* Convert units any time desiredUnits changes (when the user clicks a unit slider) */
-    useEffect(() => {
-        if (!current.weather) return;
-        const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
-        if (sameUnits) return;
-          (async () => {
-            try {
-                const converted = await convertUnits(current.units, desiredUnits, current.weather);
-                setData(d => ({
-                    ...d,
-                    current: { ...d.current, units: desiredUnits, weather: converted }
-                }));
-            } catch (err) {
-                console.error(err);
-            }
-        })();
-    }, [desiredUnits]);
+    // useEffect(() => {
+    //     if (!current.weather) return;
+    //     const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
+    //     if (sameUnits) return;
+    //       (async () => {
+    //         try {
+    //             const converted = await convertUnits(current.units, desiredUnits, current.weather);
+    //             setData(d => ({
+    //                 ...d,
+    //                 current: { ...d.current, units: desiredUnits, weather: converted }
+    //             }));
+    //         } catch (err) {
+    //             console.error(err);
+    //         }
+    //     })();
+    // }, [desiredUnits]);
 
     /**
      * Fetch, parse, and convert new weather data for given lat & lon.
