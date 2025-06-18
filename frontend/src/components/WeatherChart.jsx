@@ -38,7 +38,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
     return (
     <div className='weather-container'>
         {/* Weather Chart */}
-        <ResponsiveContainer width='100%' height={300}>
+        <ResponsiveContainer width='100%' height={300} key="weather-chart">
             <ComposedChart id='WeatherChart' className='weather-chart' data={data}
                 margin={{top: 5, left: 10, bottom: 10, right: 10 }}
                 >
@@ -76,6 +76,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
                                 dx: -18, 
                                 style: { textAnchor: 'middle', stroke: metric.color, fontWeight: 'lighter'} }}
                             domain={ getDomain(metric.key, units) }
+                            
                             tickFormatter={ value => 
                                 (Number.isInteger(value) || metric.key != 'precipitation')
                                 ? value.toFixed(0)  // if no fractional part, 0 sigfigs
@@ -179,6 +180,12 @@ function getDomain(metricKey, units) {
         case 'precipitationChance':
         case 'humidity':
             return [0, 100];
+        case 'windSpeed':
+            return [0, (dataMax) => {
+                            return (units.windSpeed === 'mph')
+                                ? Math.max(20, dataMax)
+                                : Math.max(32, dataMax);
+            }];
         default:
             return ['auto', 'auto'];
     }
