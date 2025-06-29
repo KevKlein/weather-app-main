@@ -15,16 +15,46 @@ const colors = {
     red : '#FA3830',
 };
 
+function getDomain(metricKey, units) {
+    switch (metricKey) {
+        case 'precipitation':
+            return [0, (dataMax) => {
+                            return (units.precipitation === 'mm')
+                                ? Math.max(4, dataMax)
+                                : Math.max(0.2, dataMax);
+            }];
+        case 'cloudCover':
+        case 'precipitationChance':
+        case 'humidity':
+            return [0, 100];
+        case 'windSpeed':   // hard coded domain, maybe try to avoid this if possible
+            return [0, (dataMax) => {
+                            return (units.windSpeed === 'mph')
+                                ? Math.max(20, dataMax)
+                                : Math.max(32, dataMax);
+            }];
+        default:
+            return ['auto', 'auto'];
+    }
+}
+
 
 export default function WeatherChart({ units, data, selectedMetrics, setSelectedMetrics}) {
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false);
+    data = data.map(d => ({
+        ...d,
+        windSpeed: parseFloat(d.windSpeed),
+        temperature: parseFloat(d.temperature),
+        apparentTemp: parseFloat(d.apparentTemp),
+        precipitation: parseFloat(d.precipitation)
+    }));
 
     const precipUnitLabel = (units.precipitation === 'inch') ? 'inches' : units.precipitation;
     const allMetrics = [
         { key: 'cloudCover', label: 'Cloud Cover (%)', color: colors.grey, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right'},
         { key: 'temperature', label: `Temperature (${units.temperature})`, color: colors.orange, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left'},
         { key: 'apparentTemp', label: `Apparent Temp (${units.temperature})`, color: colors.red, yAxisId: 'yTemp', yAxisLabel: `${units.temperature}`, position: 'insideLeft', orientation: 'left' },
-        { key: 'precipitation', label: `Precipitation (${precipUnitLabel})`, color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: `${precipUnitLabel}`, position: 'insideLeft', orientation: 'left' },
+        { key: 'precipitation', label: `Precipitation (${precipUnitLabel})`, color: colors.blue, yAxisId: 'yPrecip', yAxisLabel: `${precipUnitLabel} / hr`, position: 'insideLeft', orientation: 'left' },
         { key: 'precipitationChance', label: 'Chance Precip. (%)', color: colors.blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'windSpeed', label: `Wind Speed (${units.windSpeed})`, color: colors.violet, yAxisId: 'ySpeed', yAxisLabel: `${units.windSpeed}`, position: 'insideLeft', orientation: 'left' }
@@ -68,6 +98,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
                     const metric = allMetrics.find(m => m.key === key);
                     return (
                         <YAxis
+                            key={units.yAxisLabel}
                             yAxisId={metric.yAxisId}
                             axisLine={false}
                             label={{
@@ -116,7 +147,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
             <div className='weather-legend-checkboxes'>
                 {showMetricCheckboxes ? (
                     <div>
-                        {/* showing checkboxes and all available metrics */}
+                        {/* showing all available metrics with checkboxes */}
                         {allMetrics.map(metric => (
                         <label key={metric.key} className='weather-legend-label'>
                             <input type='checkbox'
@@ -165,28 +196,4 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
         </div>
     </div>
     );
-}
-  
-
-function getDomain(metricKey, units) {
-    switch (metricKey) {
-        case 'precipitation':
-            return [0, (dataMax) => {
-                            return (units.precipitation === 'mm')
-                                ? Math.max(4, dataMax)
-                                : Math.max(0.2, dataMax);
-            }];
-        case 'cloudCover':
-        case 'precipitationChance':
-        case 'humidity':
-            return [0, 100];
-        case 'windSpeed':
-            return [0, (dataMax) => {
-                            return (units.windSpeed === 'mph')
-                                ? Math.max(20, dataMax)
-                                : Math.max(32, dataMax);
-            }];
-        default:
-            return ['auto', 'auto'];
-    }
 }
