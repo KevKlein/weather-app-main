@@ -4,7 +4,7 @@ function WeatherPreferences({data, setData, userInfo, setUserInfo, convertUnits,
 
     return (
        <div className="weatherSliders">
-            { data.current.weather[0] 
+            { data.weather.dataPoints[0] 
               && ((selectedMetrics.has('temperature') || selectedMetrics.has('apparentTemp'))) && (
                 <Slider 
                     unitKey='temperature' 
@@ -17,7 +17,7 @@ function WeatherPreferences({data, setData, userInfo, setUserInfo, convertUnits,
                     convertUnits={convertUnits} 
                 />
             )}
-            { data.current.weather[0] && selectedMetrics.has('precipitation') && (
+            { data.weather.dataPoints[0] && selectedMetrics.has('precipitation') && (
                 <Slider 
                     unitKey='precipitation' 
                     label1='inches' 
@@ -29,7 +29,7 @@ function WeatherPreferences({data, setData, userInfo, setUserInfo, convertUnits,
                     convertUnits={convertUnits} 
                 />
             )}
-            { data.current.weather[0] && selectedMetrics.has('windSpeed') && (
+            { data.weather.dataPoints[0] && selectedMetrics.has('windSpeed') && (
                 <Slider 
                     unitKey='windSpeed' 
                     label1='mph' 

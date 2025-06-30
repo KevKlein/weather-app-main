@@ -3,7 +3,7 @@ import { updateUnits as apiUpdateUnits } from "../utils/UserPreferences";
 import "./Slider.css"
 
 function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, label1, label2}) {
-    const { units: currentUnits, weather: weatherData } = data.current;
+    const { units: currentUnits, dataPoints: weatherData } = data.weather;
     const { username } = userInfo
 
     async function toggleSlider() {
@@ -11,18 +11,18 @@ function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, la
             ...data.desiredUnits,
             [unitKey]: data.desiredUnits[unitKey] === label1 ? label2 : label1
         };
-        console.log(`current: `, data.current.units);
-        console.log(`current: `, currentUnits);
-        console.log(`slider newunits:`, newUnits);
-
+        console.log(`slider current: `, currentUnits);
+        console.log(`slider newunits: `, newUnits);
+        console.log('weatherdata before converting via slider :\n', JSON.stringify(weatherData[0]))
         // convert weather data
         const convertedData = await convertUnits(currentUnits, newUnits, weatherData);
+        console.log('weatherdata after converting:\n', JSON.stringify(convertedData[0]))
         setData(d => ({
             ...d,
             desiredUnits: newUnits,
-            current: { 
-                ...d.current,
-                weather: convertedData ?? [],
+            weather: { 
+                ...d.weather,
+                dataPoints: convertedData ?? [],
                 units: convertedData ? newUnits : currentUnits
             },
         }));

@@ -7,8 +7,8 @@ import { useCallback } from "react";
  *   Based on:
  *   https://www.w3schools.com/html/html5_geolocation.asp
  */
-export function useGeolocation({ setData, fetchAndConvertWeather }) {
-    const handleGeolocationButton = useCallback(() => {
+export function useGeolocation(setData, fetchAndConvertWeather) {
+    const geolocate = useCallback(() => {
         if (!navigator.geolocation) {
             alert("Geolocation is not supported by this browser.");
             return;
@@ -34,5 +34,5 @@ export function useGeolocation({ setData, fetchAndConvertWeather }) {
         );
     }, [setData, fetchAndConvertWeather]);
 
-    return { handleGeolocationButton };
+    return { geolocate };
 }

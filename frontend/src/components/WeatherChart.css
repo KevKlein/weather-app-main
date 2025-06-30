@@ -26,6 +26,12 @@
   /* border: green 2px solid; */
 }
 
+.buffering img {
+  width: 100px;
+  height: 100px;
+  margin-left: 10%;
+}
+
 /*  ----- Legend ------ */
 .weather-legend {
   display: flex;

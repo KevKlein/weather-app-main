@@ -16,19 +16,15 @@ import FavAndRecentLocations from "../components/FavAndRecentLocations";
 import "./WeatherPage.css"
 
 function WeatherPage({ data, setData, userInfo, setUserInfo }) {
-    const { desiredUnits, current, recents, favorites } = data;
+    const { weather, desiredUnits, recents, favorites } = data;
     const { username } = userInfo
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);
     const [ inputCoords, setInputCoords] = useState({ lat: '', lon: '' })
     const [selectedMetrics, setSelectedMetrics] = useState(
-         new Set(['cloudCover', 'temperature', 'precipitation', ])
-    );
+        new Set(['cloudCover', 'temperature', 'precipitation',]) // the metrics visible by default
+    ); 
 
-    const defaultUnits = {
-        temperature:    '°C',
-        precipitation:  'mm',
-        windSpeed:      'km/h'
-    };
+    const { geolocate } = useGeolocation(setData, fetchAndConvertWeather);
 
     // On page load or when a user logs in (username becomes non‐null), 
     //   populate Favorites list with their favorites from microservice
@@ -41,7 +37,6 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                     apiFetchFavorites(username),
                     apiFetchUnits(username),
                 ]);
-                console.log(`apifetchfavorits`, savedFavorites)
                 setData(d => ({
                     ...d,
                     favorites: savedFavorites,
@@ -53,34 +48,21 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
         })();
     }, [username]);
 
-    /* Convert units any time desiredUnits changes (when the user clicks a unit slider) */
-    // useEffect(() => {
-    //     if (!current.weather) return;
-    //     const sameUnits = JSON.stringify(current.units) === JSON.stringify(desiredUnits);
-    //     if (sameUnits) return;
-    //       (async () => {
-    //         try {
-    //             const converted = await convertUnits(current.units, desiredUnits, current.weather);
-    //             setData(d => ({
-    //                 ...d,
-    //                 current: { ...d.current, units: desiredUnits, weather: converted }
-    //             }));
-    //         } catch (err) {
-    //             console.error(err);
-    //         }
-    //     })();
-    // }, [desiredUnits]);
-
     /**
      * Fetch, parse, and convert new weather data for given lat & lon.
      * Save the weather data.
      */
     async function fetchAndConvertWeather(lat, lon, locationEntry=null) {
+        const openMeteoUnits = { temperature: '°C', precipitation: 'mm', windSpeed: 'km/h' };
+
+        setBufferingIcon();
+
+        // fetch and convert weather data
         const weatherData = await fetchWeatherData(lat, lon);
         if (!weatherData) return;
-        const convertedData = await convertUnits(defaultUnits, desiredUnits, weatherData);
+        const convertedData = await convertUnits(openMeteoUnits, desiredUnits, weatherData);
 
-        // Prepare entry for Recent Locations
+        // Prepare new entry for Recent Locations list
         let newEntry;
         if (locationEntry) {
             const { city, state, country } = locationEntry;
@@ -97,28 +79,37 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
         }
         const filtered = recents.filter((loc) => !(loc.lat === lat && loc.lon === lon));
         const newRecents = [newEntry, ...filtered];
-        console.log('newrecents: ', newRecents);
-        console.log('newfavs: ', data.favorites);
 
-
-        // save weather data and recent location, display coords in input fields
+        // Save weather data and recent location, display coords in input fields
         setData(d => ({
             ...d,
-            current: { 
-                ...d.current,
+            weather: { 
+                ...d.weather,
                 lat, 
                 lon,
-                weather: convertedData ?? [],
-                units: convertedData ? desiredUnits : defaultUnits
+                dataPoints: convertedData ?? [],
+                units: convertedData ? desiredUnits : openMeteoUnits
             },
             recents: newRecents,
         }));
         setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     };
+    
+    /* Replaces weather datapoints with 'loading' */
+    async function setBufferingIcon() {
+        setData(d => ({
+            ...d,
+            weather: { 
+                dataPoints: 'loading'
+            },
+        }));
+    }
 
-    /* Handler function for geolocation button*/
-    const { handleGeolocationButton } = useGeolocation({ setData, fetchAndConvertWeather });
-
+    /* Handler function for geolocation button */
+    async function handleGeolocationButton() {
+        setBufferingIcon();
+        geolocate();
+    }
 
     /* Update latitude if user types part of valid number */
     function handleCoordChange(e, field='latitude') {
@@ -191,7 +182,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                                             className="geolocationButton" 
                                             title="Use my location"
                                             aria-label="Use geolocation"
-                                            onClick={handleGeolocationButton}
+                                            onClick={() => handleGeolocationButton()}
                                         >
                                             <FaLocationCrosshairs />
                                         </button>
@@ -233,8 +224,8 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                     />
                 </div>
                 <WeatherChart 
-                    units={current.units} 
-                    data={current.weather} 
+                    units={weather.units} 
+                    data={weather.dataPoints} 
                     selectedMetrics={selectedMetrics} 
                     setSelectedMetrics={setSelectedMetrics}
                 /> 

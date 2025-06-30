@@ -1,6 +1,12 @@
 import { Bar, Line, Rectangle, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ComposedChart } from 'recharts';
 import { useState } from 'react';
-import "./WeatherChart.css"
+import "./WeatherChart.css";
+
+const bufferingGif = {
+            filepath: '/src/assets/buffering.gif',
+            alt: 'buffering',
+            title: `Fetching weather data...`
+        };
 
 const colors = {
     orange: '#ff7300',           
@@ -41,13 +47,17 @@ function getDomain(metricKey, units) {
 
 export default function WeatherChart({ units, data, selectedMetrics, setSelectedMetrics}) {
     const [showMetricCheckboxes, setShowMetricCheckboxes] = useState(false);
-    data = data.map(d => ({
-        ...d,
-        windSpeed: parseFloat(d.windSpeed),
-        temperature: parseFloat(d.temperature),
-        apparentTemp: parseFloat(d.apparentTemp),
-        precipitation: parseFloat(d.precipitation)
-    }));
+    
+    if (!data || data.length === 0) {
+        return (
+        <h4 className='weatherChartFailMessage'>Choose a valid location to get a forecast.</h4>
+    )}
+    if (data === 'loading') {
+        return (
+        <figure className='buffering'>
+            <img src={bufferingGif.filepath} alt={bufferingGif.alt} title={bufferingGif.title} />
+        </figure>
+    )}
 
     const precipUnitLabel = (units.precipitation === 'inch') ? 'inches' : units.precipitation;
     const allMetrics = [
@@ -59,11 +69,16 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
         { key: 'humidity', label: 'Humidity (%)', color: colors.sky_blue, yAxisId: 'yPercent', yAxisLabel: '%', position: 'insideRight', orientation: 'right' },
         { key: 'windSpeed', label: `Wind Speed (${units.windSpeed})`, color: colors.violet, yAxisId: 'ySpeed', yAxisLabel: `${units.windSpeed}`, position: 'insideLeft', orientation: 'left' }
     ];
-    
-    if (!data || data.length ===0) {
-        return (
-        <h4 className='weatherChartFailMessage'>Choose a valid location to get a forecast.</h4>
-    )}
+
+
+    // ensure datapoints are numeric
+    data = data.map(d => ({
+        ...d,
+        windSpeed: parseFloat(d.windSpeed),
+        temperature: parseFloat(d.temperature),
+        apparentTemp: parseFloat(d.apparentTemp),
+        precipitation: parseFloat(d.precipitation)
+    }));
 
     return (
     <div className='weather-container'>
@@ -107,7 +122,6 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
                                 dx: -18, 
                                 style: { textAnchor: 'middle', stroke: metric.color, fontWeight: 'lighter'} }}
                             domain={ getDomain(metric.key, units) }
-                            
                             tickFormatter={ value => 
                                 (Number.isInteger(value) || metric.key != 'precipitation')
                                 ? value.toFixed(0)  // if no fractional part, 0 sigfigs
@@ -147,7 +161,7 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
             <div className='weather-legend-checkboxes'>
                 {showMetricCheckboxes ? (
                     <div>
-                        {/* showing all available metrics with checkboxes */}
+                        {/* showing all available metrics with */}
                         {allMetrics.map(metric => (
                         <label key={metric.key} className='weather-legend-label'>
                             <input type='checkbox'

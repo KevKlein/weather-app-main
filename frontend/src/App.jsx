@@ -6,26 +6,31 @@ import WeatherPage from './pages/WeatherPage.jsx'
 import HelpPage from './pages/HelpPage.jsx'
 import UserModal from './components/UserModal';
 import LoginModal from './components/LoginModal';
-import {
-    fetchFavorites,
-    addFavorite as apiAddFavorite,
-    removeFavorite as apiRemoveFavorite,
-    fetchUnits as apiFetchUnits,
-    updateUnits as apiUpdateUnits,
-} from './utils/UserPreferences';
 import './App.css'
 import { FaDiceD20 } from 'react-icons/fa'
 import { FaUser } from "react-icons/fa6";
 
+/** 
+ * TODO:
+ * change data.current to data.weather, data.current.weather to data.weather.datapoints?
+ * make unit conversions faster?
+ * make loading gif when during weather fetch
+ * authentication:
+ *   password storage system
+ *   update hashedpassword on change password
+*/ 
+
+export const defaultUnits = { temperature: '°C', precipitation: 'mm', windSpeed: 'km/h' };
 
 function App() {
 
-  // “data” holds all info relevant to the WeatherPage: recents, chart units, current weather, favorites
+  // "data" holds all info relevant to the WeatherPage: 
+  //   weather datapoints, units for the chart, and lists of recent and favorite locations
   const [data, setData] = useState({
-      desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
-      current: { lat: '', lon: '', weather: [], units: {} },
-      recents: [],    // (entries are same shape as the dummy entry in 'current')
-      favorites: [],  // (entries are same shape as the dummy entry in 'current')
+      weather: { lat: '', lon: '', dataPoints: [], units: {} },
+      desiredUnits: defaultUnits,
+      recents: [],
+      favorites: [],
   })
   
   // “userInfo” holds the currently‐logged‐in username (or null) their saved prefs.
@@ -33,7 +38,7 @@ function App() {
   const [ userInfo, setUserInfo ] = useState({ 
     username: null,      // null | string
     favorites: [],       //  (mirror of data.favorites)
-    units: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' }
+    units: defaultUnits
   })
 
   const [showUserModal, setShowUserModal] = useState(null);
@@ -52,7 +57,7 @@ function App() {
       setData(d => ({
         ...d,
         favorites: [],
-        desiredUnits: { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' },
+        desiredUnits: defaultUnits,
       }));
     }
   }, [userInfo.username]);
