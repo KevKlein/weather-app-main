@@ -2,11 +2,11 @@ import { Bar, Line, Rectangle, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveC
 import { useState } from 'react';
 import "./WeatherChart.css";
 
-const bufferingGif = {
-            filepath: '/src/assets/buffering.gif',
-            alt: 'buffering',
+const loadingGif = {
+            filepath: '/src/assets/loading.gif',
+            alt: 'loading',
             title: `Fetching weather data...`
-        };
+    };
 
 const colors = {
     orange: '#ff7300',           
@@ -50,12 +50,12 @@ export default function WeatherChart({ units, data, selectedMetrics, setSelected
     
     if (!data || data.length === 0) {
         return (
-        <h4 className='weatherChartFailMessage'>Choose a valid location to get a forecast.</h4>
+        <h4 className='weatherChartFailMessage'>Choose a location to get a forecast.</h4>
     )}
     if (data === 'loading') {
         return (
-        <figure className='buffering'>
-            <img src={bufferingGif.filepath} alt={bufferingGif.alt} title={bufferingGif.title} />
+        <figure className='loading-icon'>
+            <img src={loadingGif.filepath} alt={loadingGif.alt} title={loadingGif.title} />
         </figure>
     )}
 

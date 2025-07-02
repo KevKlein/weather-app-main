@@ -5,7 +5,7 @@
  *   See https://www.countrycode.org/ for country codes.
  *   State and country are optional, can be left blank.
 */
-export async function fetchGeocoding(city, state, country, numResultsSought) {
+export async function fetchGeocoding(city, state, country, numResultsSought=5) {
   const reqPayload = {
     city,
     state,
@@ -26,8 +26,9 @@ export async function fetchGeocoding(city, state, country, numResultsSought) {
       throw new Error(`Couldn't fetch geocoding.`)
     }
 
-  const data = await res.json();
+    const data = await res.json();
     return data;
+    
   } catch (error) {
     console.error(`Error fetching geocoding: ${error}`);
     return null;

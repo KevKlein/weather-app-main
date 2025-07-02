@@ -1,0 +1,1 @@
+Citation: SPA skeleton based on my portfolio project for OSU cs290 from Fall 2024

@@ -98,7 +98,7 @@
 }
 
 .enterCoordinatesWrapper, .geolocationWrapper, .locationSearchWrapper {
-  padding-right: 2.5%;
+  padding-right: 2%;
 }
 
 .enterCoordinatesButton {
@@ -106,9 +106,18 @@
 }
 
 .geolocationButton {
-  width: 50px;
+  width: 130px;
 }
 
 .forecast-section {
   padding-top: 0;
+}
+
+.horizontal {
+  display: flex;
+  align-items: center;
+}
+
+.geolocationButton svg, .locationSearchButton svg {
+  font-size: x-large;
 }

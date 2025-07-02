@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import { FaLocationCrosshairs } from "react-icons/fa6";
+import { GrMapLocation } from "react-icons/gr";
 import { fetchWeatherData } from "../utils/FetchWeatherData";
 import { 
     fetchFavorites as apiFetchFavorites,
@@ -149,7 +150,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                                             id="latitude"
                                             type="text" 
                                             placeholder="e.g.  44.56" 
-                                            size={12}
+                                            size={8}
                                             title="Latitude in decimal notation"
                                             value={inputCoords.lat}
                                             onChange={e => {handleCoordChange(e, 'latitude')}}
@@ -161,7 +162,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                                             id="longitude"
                                             type="text" 
                                             placeholder="e.g.  -123.26" 
-                                            size={12}
+                                            size={8}
                                             title="Longitude in decimal notation"
                                             value={inputCoords.lon}
                                             onChange={e => {handleCoordChange(e, 'longitude')}}
@@ -184,7 +185,12 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                                             aria-label="Use geolocation"
                                             onClick={() => handleGeolocationButton()}
                                         >
-                                            <FaLocationCrosshairs />
+                                            <div className="horizontal">
+                                                <FaLocationCrosshairs /> 
+                                                <div>
+                                                    Geolocate Me
+                                                </div>
+                                            </div>
                                         </button>
                                     </div>
                                     <div className="locationSearchWrapper">
@@ -193,7 +199,11 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                                             title="Find a location by name"
                                             onClick={() => setShowLocationSearch(true)}
                                         >
-                                            City Search
+                                            <div className="horizontal">
+                                                <GrMapLocation />
+                                                <div>City Search</div>
+                                            </div>
+                                            
                                         </button>
                                     </div>
                                 </div>
