@@ -12,9 +12,9 @@ import { FaUser } from "react-icons/fa6";
 
 /** 
  * TODO:
- * change data.current to data.weather, data.current.weather to data.weather.datapoints?
  * make unit conversions faster?
- * make loading gif when during weather fetch
+ * only show loading gif on geolocate if user has accepted popup?
+ * change fake city name (coords) to either reverse geocode or just blank
  * authentication:
  *   password storage system
  *   update hashedpassword on change password
@@ -123,6 +123,7 @@ function App() {
                 closeModal={closeModal}
                 userInfo={userInfo}
                 setUserInfo={setUserInfo}
+                desiredUnits={data.desiredUnits}
             />
         }
       </div>

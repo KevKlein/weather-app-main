@@ -41,3 +41,14 @@
   margin: 5px 5px 0px 5px;
   padding: 5px;
 }
+
+
+.loading-icon {
+  display: flex;
+  justify-content: center;
+}
+
+.loading-icon img {
+  height: 50px;
+  width: 50px;
+}

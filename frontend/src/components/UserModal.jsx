@@ -1,20 +1,22 @@
-import { useState } from "react";
-import { deleteUser as apiDeleteUser } from "../utils/UserPreferences";
+import { deleteUser as apiDeleteUserPrefs } from "../utils/UserPreferences";
+import { deleteAccount as apiDeleteAccount } from "../utils/Authentication";
 import Modal from "./Modal";
+import { defaultUnits } from "../App";
 import "./UserModal.css"
 
 function UserModal({ closeModal, userInfo, setUserInfo }) {
     const { username } = userInfo
-    const defaultUnits = { temperature: '°F', precipitation: 'inches', windSpeed: 'mph' };
-
-    function handleLogout() {
-        setUserInfo({ username: null, favorites: [], units: defaultUnits});
-        closeModal();
-    }
 
     function handleDeleteUser() {
-        apiDeleteUser(username);
+        apiDeleteUserPrefs(username);
+        apiDeleteAccount();
         handleLogout();
+    }
+
+    function handleLogout() {
+        localStorage.removeItem('token');
+        setUserInfo({ username: null, favorites: [], units: defaultUnits});
+        closeModal();
     }
 
     return (
