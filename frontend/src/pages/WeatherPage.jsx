@@ -8,7 +8,7 @@ import {
     fetchUnits as apiFetchUnits
 } from '../utils/UserPreferences';
 import { convertUnits } from "../utils/ConvertUnits";
-import { useGeolocation } from "../utils/UseGeolocation";
+import { useGeolocation as apiUseGeolocation } from "../utils/UseGeolocation";
 import { round } from "../utils/util";
 import WeatherChart from '../components/WeatherChart';
 import WeatherPreferences from '../components/WeatherPreferences';
@@ -25,7 +25,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
         new Set(['cloudCover', 'temperature', 'precipitation',]) // the metrics visible by default
     ); 
 
-    const { geolocate } = useGeolocation(setData, fetchAndConvertWeather);
+    const { useGeolocation } = apiUseGeolocation(setData, fetchAndConvertWeather);
 
     // On page load or when a user logs in (username becomes non‐null), 
     //   populate Favorites list with their favorites from microservice
@@ -67,19 +67,28 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
         let newEntry;
         if (locationEntry) {
             const { city, state, country } = locationEntry;
-            newEntry = { city, state, country, lat, lon, isCity: true };
+            newEntry = { 
+                city, 
+                state, 
+                country, 
+                lat, 
+                lon, 
+                isCity: true 
+            };
         } else {
             newEntry = { 
-                city: `lat: ${round(lat, 2)}, lon: ${round(lon, 2)}`,
-                state: "", 
-                country: "", 
+                city: '',
+                state: '', 
+                country: '', 
                 lat, 
                 lon, 
                 isCity: false 
             };
         }
+        console.log('new location entry: ', newEntry);
         const filtered = recents.filter((loc) => !(loc.lat === lat && loc.lon === lon));
         const newRecents = [newEntry, ...filtered];
+        console.log('entries: ', filtered)
 
         // Save weather data and recent location, display coords in input fields
         setData(d => ({
@@ -109,7 +118,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
     /* Handler function for geolocation button */
     async function handleGeolocationButton() {
         setBufferingIcon();
-        geolocate();
+        useGeolocation();
     }
 
     /* Update latitude if user types part of valid number */

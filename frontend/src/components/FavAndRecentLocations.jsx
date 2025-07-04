@@ -82,21 +82,24 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
                                 className="fr-result-entry" 
                                 onClick={() => handleLocationChoice(entry)}
                             >
-                                <div>
-                                    <h4>{city}</h4>
-                                    {isCity 
-                                        ? <p>
+                                {isCity 
+                                    ? <div>
+                                        <h4>{city}</h4>
+                                        <p>
                                             {state}, {country}{" "}
                                             ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
-                                          </p>
-                                        : <p></p>
-                                    }
-                                </div>
+                                        </p>
+                                      </div>
+                                    : <div>
+                                        <h4>{Number(lat).toFixed(2)}, {Number(lon).toFixed(2)}</h4>
+                                      </div>
+                                }
                                 <div className="fr-buttons-container">
-                                    <LuTrash2 onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleRemoveFavorite(entry);
-                                    }}  
+                                    <LuTrash2 className="trash-icon"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            handleRemoveFavorite(entry);
+                                        }}  
                                     />
                                 </div>
                             </div>
@@ -117,23 +120,35 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
                                 className="fr-result-entry" 
                                 onClick={() => handleLocationChoice(entry)}
                             >
-                                <div>
-                                    <h4>{city}</h4>
-                                    {isCity 
-                                        ? <p>
+                                {isCity 
+                                    ? <div>
+                                        <h4>{city}</h4>
+                                        <p>
                                             {state}, {country}{" "}
                                             ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
-                                          </p>
-                                        : <p></p>
-                                    }
-                                </div>
+                                        </p>
+                                      </div>
+                                    : <div>
+                                        <h4>{Number(lat).toFixed(2)}, {Number(lon).toFixed(2)}</h4>
+                                      </div>
+                                }
                                 <div className="fr-buttons-container">
-                                    <FaRegStar   onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleAddFavorite(entry);
-                                        }}
-                                    />
-                                    <LuTrash2 onClick={(e) => {
+                                    {username
+                                        ? <FaRegStar className="fav-icon"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleAddFavorite(entry);
+                                                }}
+                                          />
+                                        : <div  >
+                                            <FaRegStar className="fav-icon disabled"
+                                                title="Log in to save favorite locations" 
+                                                onClick={(e) => { e.stopPropagation(); }}
+                                            />
+                                          </div>
+                                    }
+                                    <LuTrash2 className="trash-icon"
+                                        onClick={(e) => {
                                             e.stopPropagation();
                                             handleRemoveRecent(entry);
                                         }}  

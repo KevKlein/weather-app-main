@@ -97,8 +97,15 @@ aside {
   display: flex;
   gap: 5px;
   font-size: larger;
+}
+.fav-icon, .trash-icon {
   color: var(--cerulean);
 }
-.fr-buttons-container > *:hover {
+
+.fav-icon:hover, .trash-icon:hover {
   color: var(--orange-semi-transparent);
+}
+
+.fav-icon.disabled {
+  color: var(--grey-cloud);
 }
