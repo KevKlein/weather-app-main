@@ -2,18 +2,17 @@ import { useState } from "react";
 import Modal from "./Modal";
 import { fetchFavorites, fetchUnits } from '../utils/UserPreferences';
 import "./LoginModal.css"
-import { login, register } from "../utils/Authentication";
-import { defaultUnits } from "../App";
+import { login as apiLogin, register as apiRegister} from "../utils/Authentication";
+import { defaultUnits } from "../constants.js";
 
 const loadingGif = {
-            filepath: '/src/assets/loading.gif',
-            alt: 'loading',
-    };
+    filepath: '/src/assets/loading.gif',
+    alt: 'loading',
+};
 
 
-function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
+function LoginModal({ closeModal, setUserInfo, desiredUnits }) {
     const [ userInput, setUserInput ] = useState({ username: '', password: '' })
-    const [ isRegistering, setIsRegistering ] = useState(false)
     const [ errorMessage, setErrorMessage ] = useState('');
     const [ showLoadingIcon, setShowLoadingIcon ] = useState(false);
 
@@ -44,11 +43,12 @@ function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
         }
 
         setShowLoadingIcon(true)
-        const { message, token } = await login(username, password);
+        const { message, token, error } = await apiLogin(username, password);
+        console.log(`login attempt, message: ${message}, token: ${token}, error:${error}`);
 
         const loginSucceeded = (message == 'Logged in');
         if (!loginSucceeded) {
-            setErrorMessage('Invalid credentials');
+            setErrorMessage(error);
             setShowLoadingIcon(false)
             return;
         }
@@ -88,8 +88,7 @@ function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
         }
 
         setShowLoadingIcon(true);
-        const { message, token } = await register(username, password);
-
+        const { message, token } = await apiRegister(username, password);
         const registerSucceeded = (message == 'Registered');
         if (!registerSucceeded) {
             setErrorMessage('Username taken. Choose a different username.');
@@ -102,6 +101,7 @@ function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
             favorites: [],
             units: desiredUnits,
         });
+
         setShowLoadingIcon(false);
         closeModal();
     }
@@ -113,6 +113,7 @@ function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
                     <div className="field-wrapper">
                         <label htmlFor="username">Username</label>
                         <input
+                            autoFocus
                             id="username"
                             type="text"
                             size={12}
@@ -125,7 +126,7 @@ function LoginModal({ closeModal, userInfo, setUserInfo, desiredUnits }) {
                         <label htmlFor="password">Password</label>
                         <input
                             id="password"
-                            type="text"
+                            type="password"
                             size={12}
                             title=""
                             value={userInput.password}

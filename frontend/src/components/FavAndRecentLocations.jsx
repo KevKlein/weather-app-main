@@ -10,9 +10,9 @@ import {
 import "./FavAndRecentLocations.css"
 
 
-function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWeather, userInfo}) {
-    const { recents, favorites } = data;
+function FavAndRecentLocations({weatherData, setWeatherData, favorites, setFavorites, recents, setRecents, setInputCoords, fetchAndConvertWeather, userInfo}) {
     const { username } = userInfo;
+    console.log('weatherData: ', weatherData);
 
     /** When the user clicks a Recent or Favorite Location entry, 
      *  get the weather for that location again.
@@ -35,25 +35,23 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
             lat: Number(locationEntry.lat),
             lon: Number(locationEntry.lon),
         };
-        const newFavs = await apiAddFavorite(username, locationEntryWithNums);
+        // const newFavs = await apiAddFavorite(username, locationEntryWithNums);
         // The microservice returns the updated list of favorites.
-        setData(d => ({
-            ...d,
-            favorites: newFavs,
-            recents: d.recents.filter(loc => !(loc.lat === lat && loc.lon === lon)),
+        setFavorites(f => ({
+            ...f.push(locationEntry) // does push return the new list or just true etc?
         }));
+        handleRemoveRecent(locationEntry);
     }
     
     /** When someone clicks a Favorite Location's trashcan, 
      *  remove it from the microservice and update state
      */
     async function handleRemoveFavorite(locationEntry) {
-        if (!username) return;  //there shouldnt even be an entry?
+        if (!username) return;
         const { lat, lon } = locationEntry;
-        const newFavs = await apiRemoveFavorite(username, lat, lon);
-        setData(d => ({
-            ...d,
-            favorites: newFavs,
+        // const newFavs = await apiRemoveFavorite(username, lat, lon);
+        setFavorites(f => ({
+            ...f.filter(loc => !(loc.lat === lat && loc.lon === lon))  //todo
         }));
     }
 
@@ -61,9 +59,8 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
     /* When the user clicks a Recent Location's trashcan, remove it from state */
     function handleRemoveRecent(locationEntry) {
         const { lat, lon } = locationEntry;
-        setData( d => ({
-            ...d,
-            recents: d.recents.filter(loc => !(loc.lat === lat && loc.lon === lon))
+        setRecents( r => ({
+            ...r.filter(loc => !(loc.lat === lat && loc.lon === lon))
         }));
     }
 
@@ -71,8 +68,8 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
     return (
         <div className="fav-and-recents-outer">
             {(
-                <div className="fr-container">
-                    <h4><FaRegStar />Favorite Locations</h4>
+                <div className="fr-container" title= {userInfo.username ? "" : "Log in to save favorite locations"}>
+                    <h3><FaRegStar />Favorite Locations</h3>
                     <div className="fr-entries">
                         {favorites.map((entry, index) => {
                             const { city, state, country, lat, lon, isCity } = entry;
@@ -110,7 +107,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
             )}
             {(
                 <div className="fr-container">
-                    <h4><IoLocationOutline/>Recent Locations</h4>
+                    <h3><IoLocationOutline />Recent Locations</h3>
                     <div className="fr-entries">
                         {recents.map((entry, index) => {
                             const { city, state, country, lat, lon, isCity } = entry;
@@ -124,7 +121,7 @@ function FavAndRecentLocations({data, setData, setInputCoords, fetchAndConvertWe
                                     ? <div>
                                         <h4>{city}</h4>
                                         <p>
-                                            {state}, {country}{" "}
+                                            {(state) && `${state}, `}{(country) && `${country} `}
                                             ({Number(lat).toFixed(2)}, {Number(lon).toFixed(2)})
                                         </p>
                                       </div>

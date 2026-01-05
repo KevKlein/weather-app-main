@@ -1,7 +1,7 @@
 import { deleteUser as apiDeleteUserPrefs } from "../utils/UserPreferences";
 import { deleteAccount as apiDeleteAccount } from "../utils/Authentication";
 import Modal from "./Modal";
-import { defaultUnits } from "../App";
+import { defaultUnits } from "../constants";
 import "./UserModal.css"
 
 function UserModal({ closeModal, userInfo, setUserInfo }) {

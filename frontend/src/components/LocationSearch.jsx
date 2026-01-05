@@ -67,6 +67,7 @@ function LocationSearch({setShowLocationSearch, setInputCoords, fetchAndConvertW
                 <div className="field-wrapper">
                     <label htmlFor="city">City</label>
                     <input
+                        autoFocus
                         id="city"
                         type="text"
                         size={12}
@@ -114,7 +115,7 @@ function LocationSearch({setShowLocationSearch, setInputCoords, fetchAndConvertW
                     >
                         <h4>{city}</h4>
                         <p>
-                            {state}, {country} ({Number(lat).toFixed(2)},{" "}{Number(lon).toFixed(2)})
+                            {state} {state && ','} {country} ({Number(lat).toFixed(2)},{" "}{Number(lon).toFixed(2)})
                         </p>
                     </div>
                     );

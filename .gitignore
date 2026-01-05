@@ -1,2 +1,5 @@
 node-modules
 .git
+.env
+package-lock.json
+test.js

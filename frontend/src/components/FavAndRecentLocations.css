@@ -44,7 +44,7 @@ aside {
   border-top: var(--forest-semi-transparent) 1px solid;
 }
 
-.fr-container > h4 {
+.fr-container > h3 {
   display: flex;
   justify-content: center;
   gap: 2%;

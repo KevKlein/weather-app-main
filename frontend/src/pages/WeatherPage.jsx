@@ -11,43 +11,48 @@ import { convertUnits } from "../utils/ConvertUnits";
 import { useGeolocation as apiUseGeolocation } from "../utils/UseGeolocation";
 import { round } from "../utils/util";
 import WeatherChart from '../components/WeatherChart';
-import WeatherPreferences from '../components/WeatherPreferences';
+import SliderGroup from '../components/SliderGroup';
 import LocationSearch from "../components/LocationSearch";
 import FavAndRecentLocations from "../components/FavAndRecentLocations";
 import "./WeatherPage.css"
+import { defaultUnits, defaultMetrics } from "../constants";
 
-function WeatherPage({ data, setData, userInfo, setUserInfo }) {
-    const { weather, desiredUnits, recents, favorites } = data;
+
+function WeatherPage({ weatherData, setWeatherData, userInfo, setUserInfo }) {
+    const { lat, lon, dataPoints, units } = weatherData;
     const { username } = userInfo
     const [ showLocationSearch, setShowLocationSearch ] = useState(false);
     const [ inputCoords, setInputCoords] = useState({ lat: '', lon: '' })
-    const [selectedMetrics, setSelectedMetrics] = useState(
-        new Set(['cloudCover', 'temperature', 'precipitation',]) // the metrics visible by default
-    ); 
+    const [ selectedMetrics, setSelectedMetrics ] = useState(defaultMetrics);
+    const [ sliderUnits, setSliderUnits ] = useState(defaultUnits); //todo
+    const [ showBufferingIcon, setShowBufferingIcon ] = useState(false);
+    const [ recents, setRecents ] = useState([]);  // todo
+    const [ favorites, setFavorites ] = useState([]); //todo 
 
-    const { useGeolocation } = apiUseGeolocation(setData, fetchAndConvertWeather);
+    const { useGeolocation } = apiUseGeolocation(setWeatherData, fetchAndConvertWeather);
+
 
     // On page load or when a user logs in (username becomes non‐null), 
     //   populate Favorites list with their favorites from microservice
     // TODO move this to App.jsx?
-    useEffect(() => {
-        if (!username) return;
-        (async () => {
-            try {
-                const [ savedFavorites, savedUnits ] = await Promise.all([
-                    apiFetchFavorites(username),
-                    apiFetchUnits(username),
-                ]);
-                setData(d => ({
-                    ...d,
-                    favorites: savedFavorites,
-                    desiredUnits: savedUnits
-                }));
-            } catch (err) {
-                console.error('Error loading favorites for user', username, err);
-            }
-        })();
-    }, [username]);
+    // useEffect(() => {
+    //     if (!username) return;
+    //     (async () => {
+    //         try {
+    //             const [ savedFavorites, savedUnits ] = await Promise.all([
+    //                 apiFetchFavorites(username),
+    //                 apiFetchUnits(username),
+    //             ]);
+    //             setWeatherData(d => ({
+    //                 ...d,
+    //                 favorites: savedFavorites,
+    //                 sliderUnits: savedUnits
+    //             }));
+    //         } catch (err) {
+    //             console.error('Error loading favorites for user', username, err);
+    //         }
+    //     })();
+    // }, [username]);
 
     /**
      * Fetch, parse, and convert new weather data for given lat & lon.
@@ -56,12 +61,13 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
     async function fetchAndConvertWeather(lat, lon, locationEntry=null) {
         const openMeteoUnits = { temperature: '°C', precipitation: 'mm', windSpeed: 'km/h' };
 
-        setBufferingIcon();
+        // setShowBufferingIcon(true);
 
         // fetch and convert weather data
         const weatherData = await fetchWeatherData(lat, lon);
-        if (!weatherData) return;
-        const convertedData = await convertUnits(openMeteoUnits, desiredUnits, weatherData);
+        if (!weatherData) return; // add error message?
+        //TODO dont replace with converted data, just have both
+        const convertedDataPoints = await convertUnits(openMeteoUnits, sliderUnits, weatherData);
 
         // Prepare new entry for Recent Locations list
         let newEntry;
@@ -86,38 +92,23 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
             };
         }
         console.log('new location entry: ', newEntry);
-        const filtered = recents.filter((loc) => !(loc.lat === lat && loc.lon === lon));
+        const filtered = recents.filter((loc) => !(loc.lat === lat && loc.lon === lon)); // dont include current entry
         const newRecents = [newEntry, ...filtered];
         console.log('entries: ', filtered)
 
         // Save weather data and recent location, display coords in input fields
-        setData(d => ({
-            ...d,
-            weather: { 
-                ...d.weather,
-                lat, 
-                lon,
-                dataPoints: convertedData ?? [],
-                units: convertedData ? desiredUnits : openMeteoUnits
-            },
-            recents: newRecents,
+        setWeatherData(wd => ({
+            lat, 
+            lon,
+            dataPoints: convertedDataPoints ?? [],
+            units: sliderUnits
         }));
         setInputCoords({ lat: round(lat, 2), lon: round(lon, 2) });
     };
-    
-    /* Replaces weather datapoints with 'loading' */
-    async function setBufferingIcon() {
-        setData(d => ({
-            ...d,
-            weather: { 
-                dataPoints: 'loading'
-            },
-        }));
-    }
 
     /* Handler function for geolocation button */
     async function handleGeolocationButton() {
-        setBufferingIcon();
+        // setShowBufferingIcon(true);
         useGeolocation();
     }
 
@@ -152,7 +143,7 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                         <article id="location" className='location'>
                             <h3>Location</h3>
                             <div className="location-outer">
-                                <h4 className='get-location-header'>Enter your location by coordinates, geolocation, or city.</h4>
+                                <h4 className='get-location-header'>Enter a location by coordinates, geolocation, or city.</h4>
                                 <div className="location-input">
                                     <div className="coords-wrapper">
                                         <input
@@ -221,8 +212,12 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                     </div>
                     <aside className="fav-and-recents-aside">
                         <FavAndRecentLocations 
-                            data={data} 
-                            setData={setData} 
+                            weatherData={weatherData} 
+                            setWeatherData={setWeatherData}
+                            favorites={favorites}
+                            setFavorites={setFavorites}
+                            recents={recents}
+                            setRecents={setRecents}
                             setInputCoords={setInputCoords} 
                             fetchAndConvertWeather={fetchAndConvertWeather}
                             userInfo={userInfo}
@@ -233,9 +228,11 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
             <section className="forecast-section">
                 <div className="forecast-header">
                     <h3>Forecast</h3>
-                    <WeatherPreferences 
-                        data={data} 
-                        setData={setData} 
+                    <SliderGroup 
+                        weatherData={weatherData} 
+                        setWeatherData={setWeatherData}
+                        sliderUnits={sliderUnits}
+                        setSliderUnits={setSliderUnits}
                         userInfo={userInfo}
                         setUserInfo={setUserInfo}
                         convertUnits={convertUnits} 
@@ -243,8 +240,8 @@ function WeatherPage({ data, setData, userInfo, setUserInfo }) {
                     />
                 </div>
                 <WeatherChart 
-                    units={weather.units} 
-                    data={weather.dataPoints} 
+                    units={defaultUnits} 
+                    data={weatherData.dataPoints} 
                     selectedMetrics={selectedMetrics} 
                     setSelectedMetrics={setSelectedMetrics}
                 /> 

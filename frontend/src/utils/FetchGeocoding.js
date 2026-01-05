@@ -1,3 +1,5 @@
+const PORT = 4002;
+
 /** 
  * Get location data, including lat & lon, via geolocation microservice.
  * Several search results can be returned.
@@ -14,7 +16,7 @@ export async function fetchGeocoding(city, state, country, numResultsSought=5) {
   };
 
   try {
-    const res = await fetch('http://localhost:36120/api/geocode', {
+    const res = await fetch(`http://localhost:${PORT}/api/geocode`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

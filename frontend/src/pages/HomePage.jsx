@@ -5,7 +5,7 @@ import { WiDayRainWind } from "react-icons/wi";
 import { useNavigate } from 'react-router-dom';
 
 
-function HomePage(){
+function HomePage({setShowUserModal, username}){
     useEffect(() => {
         document.body.classList.add('homepage');
         return () => {
@@ -21,11 +21,19 @@ function HomePage(){
                 <article>                  
                     {/* <i FiSun /> <i FaDiceD20 /> <i WiDayRainWind /> */}
                     <h2> Nat20 Weather</h2>
-                    <p>Nat20 Weather provides detailed hourly weather forecasting for any location in the world. Get the weather by latitude and longitude, or have your browser get your coordinates for you. Create an account so you can save your favorite locations and preferred units for next time.</p>
+                    <p>Nat20 Weather provides detailed hourly weather forecasting for any location in the world. Create an account to save your favorite locations and preferred units for next time.</p>
+                    { username && 
+                        <h3>Hello, {username}!</h3>
+                    }
                     <div>
                         <button onClick={() => navigate('/weather')}>
                             Get Your Forecast
                         </button>
+                        { !username &&
+                            <button onClick={() => setShowUserModal('login')}>
+                                Log in / Register
+                            </button>
+                        }
                     </div>
                     
                     

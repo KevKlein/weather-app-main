@@ -1,4 +1,4 @@
-const PORT = 36121;
+const PORT = 4003;
 
 /* ----- Favorite locations ----- */
 /* Fetch a user's "favorites" array. Can be [], returns [] on error. */

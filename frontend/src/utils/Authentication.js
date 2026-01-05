@@ -1,4 +1,4 @@
-const PORT = 36104;
+const PORT = 4004;
 
 /** 
  * Attempt to register account using authentication microservice.
@@ -6,7 +6,7 @@ const PORT = 36104;
  * Return true if registration succeeds, else false.
 */
 export async function register(username, password) {
-    const url = `http://localhost:${PORT}/api/register`;
+    const url = `http://localhost:${PORT}/api/auth/register`;
     try {
         const resp = await fetch(url, {
             method: 'POST',
@@ -23,7 +23,7 @@ export async function register(username, password) {
 }
 
 export async function login(username, password) {
-    const url = `http://localhost:${PORT}/api/login`;
+    const url = `http://localhost:${PORT}/api/auth/login`;
     try {
         const resp = await fetch(url, {
             method: 'POST',
@@ -39,7 +39,7 @@ export async function login(username, password) {
 }
 
 export async function deleteAccount() {
-    const url = `http://localhost:${PORT}/api/delete-account`;
+    const url = `http://localhost:${PORT}/api/auth/delete-account`;
     const token = localStorage.getItem('token');
     try {
         const resp = await fetch(url, {

@@ -9,7 +9,7 @@ export default defineConfig({
     watch: {
       usePolling: true,
     },
-    port: 36112,
+    port: 4000,
     open: true,
   },
 });

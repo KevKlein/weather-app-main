@@ -1,41 +1,36 @@
-import React from "react";
 import { updateUnits as apiUpdateUnits } from "../utils/UserPreferences";
 import "./Slider.css"
 
-function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, label1, label2}) {
-    const { units: currentUnits, dataPoints: weatherData } = data.weather;
-    const { username } = userInfo
+function Slider({ unitKey, label1, label2, weatherData, setWeatherData, sliderUnits, setSliderUnits, userInfo, setUserInfo, convertUnits}) {
+    const { username } = userInfo;
 
     async function toggleSlider() {
-        const newUnits = {
-            ...data.desiredUnits,
-            [unitKey]: data.desiredUnits[unitKey] === label1 ? label2 : label1
+      const currentUnit = sliderUnits[unitKey];
+      const newUnit = sliderUnits[unitKey] === label1 ? label2 : label1 // todo reverse these?
+      
+        const newSliderUnits = {
+            ...sliderUnits,
+            [unitKey]: newUnit
         };
-        console.log(`slider current: `, currentUnits);
-        console.log(`slider newunits: `, newUnits);
-        console.log('weatherdata before converting via slider :\n', JSON.stringify(weatherData[0]))
-        // convert weather data
-        const convertedData = await convertUnits(currentUnits, newUnits, weatherData);
-        console.log('weatherdata after converting:\n', JSON.stringify(convertedData[0]))
-        setData(d => ({
-            ...d,
-            desiredUnits: newUnits,
-            weather: { 
-                ...d.weather,
-                dataPoints: convertedData ?? [],
-                units: convertedData ? newUnits : currentUnits
-            },
-        }));
+        console.log(`slider units: `, sliderUnits);
+        console.log(`slider newunits: `, newSliderUnits);
 
-        // 
+        // console.log('weatherdata before converting via slider :\n', JSON.stringify(weatherData[0]))
+        // convert weather data
+        const convertedDataPoints = convertUnits(currentUnit, newUnit, weatherData.dataPoints);
+        // console.log('weatherdata after converting:\n', JSON.stringify(convertedData[0]))
+        setWeatherData(wd => ({
+            ...wd,
+            dataPoints: convertedDataPoints,
+            units: newSliderUnits
+        }));
+        setSliderUnits(newSliderUnits);
+
+        // update user preferences for new unit
         if (username) {
             try {
-                const updated = await apiUpdateUnits(username, newUnits);
+                const updated = await apiUpdateUnits(username, newSliderUnits); // TODO does this really need to await?
                 if (updated) {
-                    setData(d => ({
-                        ...d,
-                        desiredUnits: updated,
-                    }));
                     setUserInfo(u => ({
                          ...u,
                         units: updated
@@ -47,7 +42,7 @@ function Slider({data, setData, userInfo, setUserInfo, convertUnits, unitKey, la
         }
     }
 
-    const label1Active = data.desiredUnits[unitKey] === label1;
+    const label1Active = sliderUnits[unitKey] === label1;
 
     return (
        <>

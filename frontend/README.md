@@ -1,1 +1,13 @@
-Citation: SPA skeleton based on my portfolio project for OSU cs290 from Fall 2024
+TODO:
+outsource auth to supabase
+design sql database
+    favorites into db
+    user preferences into db
+redo db api functions
+    standard CRUD
+    other functions call those
+put main website on vercel
+redo state variables
+clean up functions
+clean up html
+merge unit conversions into main app
